@@ -1,73 +1,174 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 class ModularFlightIntegrator : FlightIntegrator
 {
 
-    public delegate void voidDelegate();
-    public delegate void voidPartDelegate(Part part);
-    public delegate double doublePartDelegate(Part part);
-    public delegate void voidThermalDataDelegate(PartThermalData ptd);
-    public delegate double IntegratePhysicalObjectsDelegate(List<GameObject> pObjs, double atmDensity);
+    public delegate void voidDelegate(ModularFlightIntegrator fi);
+    public delegate void voidPartDelegate(ModularFlightIntegrator fi, Part part);
+    public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
+    public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
+    public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<GameObject> pObjs, double atmDensity);
 
 
+    // Properties to access the FlightIntegrator protected field
+    // Some should be readonly I guess
+    
+    public Transform IntegratorTransform
+    {
+        get { return integratorTransform; }
+        set { integratorTransform = value; }
+    }
+
+    public Part PartRef
+    {
+        get { return partRef; }
+        set { partRef = value; }
+    }
+
+    public CelestialBody CurrentMainBody
+    {
+        get { return currentMainBody; }
+        set { currentMainBody = value; }
+    }
+
+    public Vessel Vessel
+    {
+        get { return vessel; }
+        set { vessel = value; }
+    }
+
+    public PhysicsGlobals.LiftingSurfaceCurve LiftCurves
+    {
+        get { return liftCurves; }
+        set { liftCurves = value; }
+    }
+
+    public double DensityThermalLerp
+    {
+        get { return densityThermalLerp; }
+        set { densityThermalLerp = value; }
+    }
+
+    public int PartCount
+    {
+        get { return partCount; }
+        set { partCount = value; }
+    }
+
+    public static int SunLayerMask
+    {
+        get { return sunLayerMask; }
+        set { sunLayerMask = value; }
+    }
+
+    public bool RecreateThermalGraph
+    {
+        get { return recreateThermalGraph; }
+        set { recreateThermalGraph = value; }
+    }
+
+    public int PartThermalDataCount
+    {
+        get { return partThermalDataCount; }
+        set { partThermalDataCount = value; }
+    }
+
+    public bool IsAnalytical
+    {
+        get { return isAnalytical; }
+        set { isAnalytical = value; }
+    }
+
+    public double WarpReciprocal
+    {
+        get { return warpReciprocal; }
+        set { warpReciprocal = value; }
+    }
+
+    public bool WasMachConvectionEnabled
+    {
+        get { return wasMachConvectionEnabled; }
+        set { wasMachConvectionEnabled = value; }
+    }
+
+
+    // Awake fire when getting to the Flight Scene, not sooner
     protected void Awake()
     {
         VesselModuleManager.RemoveModuleOfType(typeof (FlightIntegrator));
-        string msg = "ModularFlightIntegrator Awake. Current modules coVesselModule : \n";
-        foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, true))
+        string msg = "Awake. Current modules coVesselModule : \n";
+        foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
         {
             msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
         }
-        MonoBehaviour.print(msg);
+        print(msg);
 
     }
 
     protected override void Start()
     {
+        string msg = "Start. Current modules coVesselModule : \n";
+        foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
+        {
+            msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
+        }
+        print(msg);
         base.Start();
     }
 
     protected override void OnDestroy()
     {
+        print("OnDestroy");
         base.OnDestroy();
     }
 
     protected override void HookVesselEvents()
     {
+        print("HookVesselEvents");
         base.HookVesselEvents();
     }
 
     protected override void UnhookVesselEvents()
     {
+        print("UnhookVesselEvents");
         base.UnhookVesselEvents();
     }
 
     protected override void FixedUpdate()
     {
+        // print("FixedUpdate");
+
+        // Update vessel values
+
         // UpdateThermodynamics
+
+        // Copy values to part
 
         // UpdateOcclusion
 
-        // Integrate
+        // Integrate Root part
 
         // IntegratePhysicalObjects
 
         base.FixedUpdate();
     }
 
-    private static voidDelegate UpdateThermodynamicsOverride;
-    private static voidDelegate UpdateThermodynamicsPre;
-    private static voidDelegate UpdateThermodynamicsPost;
+    private static voidDelegate updateThermodynamicsOverride;
+    private static voidDelegate updateThermodynamicsPre;
+    private static voidDelegate updateThermodynamicsPost;
 
     public static bool RegisterUpdateThermodynamicsOverride(voidDelegate dlg)
     {
-        if (UpdateThermodynamicsOverride == null)
+        if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
         {
-            UpdateThermodynamicsOverride = dlg;
+            print("You can only register on the SPACECENTER scene");
+        }
+
+
+        if (updateThermodynamicsOverride == null)
+        {
+            updateThermodynamicsOverride = dlg;
             return true;
         }
 
@@ -77,12 +178,12 @@ class ModularFlightIntegrator : FlightIntegrator
 
     public static void RegisterUpdateThermodynamicsPre(voidDelegate dlg)
     {
-        UpdateThermodynamicsPre += dlg;
+        updateThermodynamicsPre += dlg;
     }
 
     public static void RegisterUpdateThermodynamicsPost(voidDelegate dlg)
     {
-        UpdateThermodynamicsPost += dlg;
+        updateThermodynamicsPost += dlg;
     }
 
     protected override void UpdateThermodynamics()
@@ -95,73 +196,76 @@ class ModularFlightIntegrator : FlightIntegrator
 
         // UpdateRadiation
 
-        if (UpdateThermodynamicsPre != null)
+        if (updateThermodynamicsPre != null)
         {
-            UpdateThermodynamicsPre();
+            updateThermodynamicsPre(this);
         }
 
-        if (UpdateThermodynamicsOverride == null)
+        if (updateThermodynamicsOverride == null)
         {
             base.UpdateThermodynamics();
         }
         else
         {
-            UpdateThermodynamicsOverride();
+            updateThermodynamicsOverride(this);
         }
 
-        if (UpdateThermodynamicsPost != null)
+        if (updateThermodynamicsPost != null)
         {
-            UpdateThermodynamicsPost();
+            updateThermodynamicsPost(this);
         }
 
     }
 
-
-    private static voidDelegate UpdateOcclusionOverride;
+    private static voidDelegate updateOcclusionOverride;
 
     protected override void UpdateOcclusion()
     {
-        if (UpdateOcclusionOverride == null)
+        if (updateOcclusionOverride == null)
         {
             base.UpdateOcclusion();
         }
         else
         {
-            UpdateOcclusionOverride();
+            updateOcclusionOverride(this);
         }
     }
 
 
-    private static voidPartDelegate IntegrateOverride;
+    private static voidPartDelegate integrateOverride;
     protected override void Integrate(Part part)
     {
+        // Aply Gravity / centrifugal / Coriolis Forces)
+
         // UpdateAerodynamics
 
-        if (IntegrateOverride == null)
+        // Integrate child parts
+
+        if (integrateOverride == null)
         {
             base.Integrate(part);
         }
         else
         {
-            IntegrateOverride(part);
+            integrateOverride(this, part);
         }
     }
 
 
-    private static IntegratePhysicalObjectsDelegate IntegratePhysicalObjectsOverride;
+    private static IntegratePhysicalObjectsDelegate integratePhysicalObjectsOverride;
     protected override void IntegratePhysicalObjects(List<GameObject> pObjs, double atmDensity)
     {
-        if (IntegratePhysicalObjectsOverride == null)
+        if (integratePhysicalObjectsOverride == null)
         {
             base.IntegratePhysicalObjects(pObjs, atmDensity);
         }
         else
         {
-            IntegratePhysicalObjectsOverride(pObjs, atmDensity);
+            integratePhysicalObjectsOverride(this, pObjs, atmDensity);
         }
     }
 
-    private static voidPartDelegate UpdateAerodynamicsOverride;
+    private static voidPartDelegate updateAerodynamicsOverride;
     protected override void UpdateAerodynamics(Part part)
     {
         // CalculateDragValue
@@ -170,84 +274,84 @@ class ModularFlightIntegrator : FlightIntegrator
         // CalculateAreaRadiative
         // CalculateAreaExposed
 
-        if (UpdateAerodynamicsOverride == null)
+        if (updateAerodynamicsOverride == null)
         {
             base.UpdateAerodynamics(part);
         }
         else
         {
-            UpdateAerodynamicsOverride(part);
+            updateAerodynamicsOverride(this, part);
         }
     }
 
 
-    private static doublePartDelegate CalculateDragValueOverride;
+    private static doublePartDelegate calculateDragValueOverride;
     protected override double CalculateDragValue(Part part)
     {
         // CalculateDragValue_Spherical
         // CalculateDragValue_Cylindrical
         // CalculateDragValue_Conic
         // CalculateDragValue_Cube
-
-        if (CalculateDragValueOverride == null)
+        
+        if (calculateDragValueOverride == null)
         {
             return base.CalculateDragValue(part);
         }
         else
         {
-            return CalculateDragValueOverride(part);
+            return calculateDragValueOverride(this, part);
         }
     }
 
-    private static voidDelegate UpdateThermalGraphOverride;
+    private static voidDelegate updateThermalGraphOverride;
     protected override void UpdateThermalGraph()
     {
-        if (UpdateThermalGraphOverride == null)
+        if (updateThermalGraphOverride == null)
         {
             base.UpdateThermalGraph();
         }
         else
         {
-            UpdateThermalGraphOverride();
+            updateThermalGraphOverride(this);
         }
     }
 
-    private static voidDelegate UpdateConductionOverride;
+    private static voidDelegate updateConductionOverride;
     protected override void UpdateConduction()
     {
-        if (UpdateConductionOverride == null)
+        if (updateConductionOverride == null)
         {
             base.UpdateConduction();
         }
         else
         {
-            UpdateConductionOverride();
+            updateConductionOverride(this);
         }
     }
 
-    private static voidThermalDataDelegate UpdateConvectionOverride;
+    private static voidThermalDataDelegate updateConvectionOverride;
     protected override void UpdateConvection(PartThermalData ptd)
     {
-        if (UpdateConvectionOverride == null)
+        if (updateConvectionOverride == null)
         {
             base.UpdateConvection(ptd);
         }
         else
         {
-            UpdateConvectionOverride(ptd);
+            updateConvectionOverride(this, ptd);
         }
     }
 
-    private static voidThermalDataDelegate UpdateRadiationOverride;
+    private static voidThermalDataDelegate updateRadiationOverride;
     protected override void UpdateRadiation(PartThermalData ptd)
     {
-        if (UpdateRadiationOverride == null)
+        if (updateRadiationOverride == null)
         {
             base.UpdateRadiation(ptd);
         }
         else
         {
-            UpdateRadiationOverride(ptd);
+            updateRadiationOverride(this, ptd);
         }
     }
 
@@ -271,43 +375,50 @@ class ModularFlightIntegrator : FlightIntegrator
         return base.CalculateDragValue_Cube(part);
     }
 
-    private static doublePartDelegate CalculateAerodynamicAreaOverride;
+    private static doublePartDelegate calculateAerodynamicAreaOverride;
     protected override double CalculateAerodynamicArea(Part part)
     {
-        if (CalculateAerodynamicAreaOverride == null)
+        if (calculateAerodynamicAreaOverride == null)
         {
             return base.CalculateAerodynamicArea(part);
         }
         else
         {
-            return CalculateAerodynamicAreaOverride(part);
+            return calculateAerodynamicAreaOverride(this, part);
         }
     }
 
-    private static doublePartDelegate CalculateAreaRadiativeOverride;
+    private static doublePartDelegate calculateAreaRadiativeOverride;
     protected override double CalculateAreaRadiative(Part part)
     {
-        if (CalculateAreaRadiativeOverride == null)
+        if (calculateAreaRadiativeOverride == null)
         {
             return base.CalculateAreaRadiative(part);
         }
         else
         {
-            return CalculateAreaRadiativeOverride(part);
+            return calculateAreaRadiativeOverride(this, part);
         }
     }
 
-    private static doublePartDelegate CalculateAreaExposedOverride;
+    private static doublePartDelegate calculateAreaExposedOverride;
     protected override double CalculateAreaExposed(Part part)
     {
-        if (CalculateAreaExposedOverride == null)
+        if (calculateAreaExposedOverride == null)
         {
             return base.CalculateAreaExposed(part);
         }
         else
         {
-            return CalculateAreaExposedOverride(part);
+            return calculateAreaExposedOverride(this, part);
         }
     }
+
+
+    static void print(string msg)
+    {
+        MonoBehaviour.print("[ModularFlightIntegrator] " + msg);
+    }
+
 
 }
