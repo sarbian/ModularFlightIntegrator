@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace ModularFlightIntegrator
+namespace ModularFI
 {
-    class ModularFlightIntegrator : FlightIntegrator
+    public class ModularFlightIntegrator : FlightIntegrator
     {
 
         public delegate void voidDelegate(ModularFlightIntegrator fi);
@@ -93,6 +93,7 @@ namespace ModularFlightIntegrator
             get { return wasMachConvectionEnabled; }
             set { wasMachConvectionEnabled = value; }
         }
+
 
 
         // Awake fire when getting to the Flight Scene, not sooner
@@ -221,6 +222,24 @@ namespace ModularFlightIntegrator
 
         private static voidDelegate updateOcclusionOverride;
 
+        public static bool RegisterUpdateOcclusionOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateOcclusionOverride == null)
+            {
+                updateOcclusionOverride = dlg;
+                return true;
+            }
+
+            print("UpdateOcclusion already has an override");
+            return false;
+        }
+
         protected override void UpdateOcclusion()
         {
             if (updateOcclusionOverride == null)
@@ -235,6 +254,25 @@ namespace ModularFlightIntegrator
 
 
         private static voidPartDelegate integrateOverride;
+
+        public static bool RegisterIntegrateOverride(voidPartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (integrateOverride == null)
+            {
+                integrateOverride = dlg;
+                return true;
+            }
+
+            print("Integrate already has an override");
+            return false;
+        }
+
         protected override void Integrate(Part part)
         {
             // Aply Gravity / centrifugal / Coriolis Forces)
@@ -255,6 +293,25 @@ namespace ModularFlightIntegrator
 
 
         private static IntegratePhysicalObjectsDelegate integratePhysicalObjectsOverride;
+
+        public static bool RegisterIntegratePhysicalObjectsOverride(IntegratePhysicalObjectsDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (integratePhysicalObjectsOverride == null)
+            {
+                integratePhysicalObjectsOverride = dlg;
+                return true;
+            }
+
+            print("IntegratePhysicalObjects already has an override");
+            return false;
+        }
+
         protected override void IntegratePhysicalObjects(List<GameObject> pObjs, double atmDensity)
         {
             if (integratePhysicalObjectsOverride == null)
@@ -268,6 +325,25 @@ namespace ModularFlightIntegrator
         }
 
         private static voidPartDelegate updateAerodynamicsOverride;
+
+        public static bool RegisterUpdateAerodynamicsOverride(voidPartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateAerodynamicsOverride == null)
+            {
+                updateAerodynamicsOverride = dlg;
+                return true;
+            }
+
+            print("UpdateAerodynamics already has an override");
+            return false;
+        }
+
         protected override void UpdateAerodynamics(Part part)
         {
             // CalculateDragValue
@@ -288,6 +364,25 @@ namespace ModularFlightIntegrator
 
 
         private static doublePartDelegate calculateDragValueOverride;
+
+        public static bool RegisterCalculateDragValueOverride(doublePartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateDragValueOverride == null)
+            {
+                calculateDragValueOverride = dlg;
+                return true;
+            }
+
+            print("CalculateDragValue already has an override");
+            return false;
+        }
+
         protected override double CalculateDragValue(Part part)
         {
             // CalculateDragValue_Spherical
@@ -306,6 +401,25 @@ namespace ModularFlightIntegrator
         }
 
         private static voidDelegate updateThermalGraphOverride;
+
+        public static bool RegisterUpdateThermalGraphOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateThermalGraphOverride == null)
+            {
+                updateThermalGraphOverride = dlg;
+                return true;
+            }
+
+            print("UpdateThermalGraph already has an override");
+            return false;
+        }
+
         protected override void UpdateThermalGraph()
         {
             if (updateThermalGraphOverride == null)
@@ -319,6 +433,25 @@ namespace ModularFlightIntegrator
         }
 
         private static voidDelegate updateConductionOverride;
+
+        public static bool RegisterUpdateConductionOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateConductionOverride == null)
+            {
+                updateConductionOverride = dlg;
+                return true;
+            }
+
+            print("UpdateConduction already has an override");
+            return false;
+        }
+
         protected override void UpdateConduction()
         {
             if (updateConductionOverride == null)
@@ -332,6 +465,25 @@ namespace ModularFlightIntegrator
         }
 
         private static voidThermalDataDelegate updateConvectionOverride;
+
+        public static bool RegisterUpdateConvectionOverride(voidThermalDataDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateConvectionOverride == null)
+            {
+                updateConvectionOverride = dlg;
+                return true;
+            }
+
+            print("UpdateConvection already has an override");
+            return false;
+        }
+
         protected override void UpdateConvection(PartThermalData ptd)
         {
             if (updateConvectionOverride == null)
@@ -345,6 +497,25 @@ namespace ModularFlightIntegrator
         }
 
         private static voidThermalDataDelegate updateRadiationOverride;
+
+        public static bool RegisterUpdateRadiationOverride(voidThermalDataDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateRadiationOverride == null)
+            {
+                updateRadiationOverride = dlg;
+                return true;
+            }
+
+            print("UpdateConvection already has an override");
+            return false;
+        }
+
         protected override void UpdateRadiation(PartThermalData ptd)
         {
             if (updateRadiationOverride == null)
@@ -378,6 +549,25 @@ namespace ModularFlightIntegrator
         }
 
         private static doublePartDelegate calculateAerodynamicAreaOverride;
+
+        public static bool RegisterCalculateAerodynamicAreaOverride(doublePartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateAerodynamicAreaOverride == null)
+            {
+                calculateAerodynamicAreaOverride = dlg;
+                return true;
+            }
+
+            print("CalculateAerodynamicArea already has an override");
+            return false;
+        }
+
         protected override double CalculateAerodynamicArea(Part part)
         {
             if (calculateAerodynamicAreaOverride == null)
@@ -391,6 +581,25 @@ namespace ModularFlightIntegrator
         }
 
         private static doublePartDelegate calculateAreaRadiativeOverride;
+
+        public static bool RegisterCalculateAreaRadiativeOverride(doublePartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateAreaRadiativeOverride == null)
+            {
+                calculateAreaRadiativeOverride = dlg;
+                return true;
+            }
+
+            print("CalculateAreaRadiative already has an override");
+            return false;
+        }
+
         protected override double CalculateAreaRadiative(Part part)
         {
             if (calculateAreaRadiativeOverride == null)
@@ -404,6 +613,25 @@ namespace ModularFlightIntegrator
         }
 
         private static doublePartDelegate calculateAreaExposedOverride;
+
+        public static bool RegisterCalculateAreaExposedOverride(doublePartDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateAreaExposedOverride == null)
+            {
+                calculateAreaExposedOverride = dlg;
+                return true;
+            }
+
+            print("CalculateAreaExposed already has an override");
+            return false;
+        }
+
         protected override double CalculateAreaExposed(Part part)
         {
             if (calculateAreaExposedOverride == null)
