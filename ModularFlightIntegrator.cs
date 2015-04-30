@@ -220,6 +220,11 @@ namespace ModularFI
 
         }
 
+        public void BaseFIUpdateThermodynamics()
+        {
+            base.UpdateThermodynamics();
+        }
+
         private static voidDelegate updateOcclusionOverride;
 
         public static bool RegisterUpdateOcclusionOverride(voidDelegate dlg)
@@ -252,6 +257,10 @@ namespace ModularFI
             }
         }
 
+        public void BaseFIUpdateOcclusion()
+        {
+            base.UpdateOcclusion();
+        }
 
         private static voidPartDelegate integrateOverride;
 
@@ -291,6 +300,10 @@ namespace ModularFI
             }
         }
 
+        public void BaseFIIntegrate(Part part)
+        {
+            base.Integrate(part);
+        }
 
         private static IntegratePhysicalObjectsDelegate integratePhysicalObjectsOverride;
 
@@ -322,6 +335,11 @@ namespace ModularFI
             {
                 integratePhysicalObjectsOverride(this, pObjs, atmDensity);
             }
+        }
+
+        public void BaseFIIntegratePhysicalObjects(List<GameObject> pObjs, double atmDensity)
+        {
+            base.IntegratePhysicalObjects(pObjs, atmDensity);
         }
 
         private static voidPartDelegate updateAerodynamicsOverride;
@@ -362,6 +380,10 @@ namespace ModularFI
             }
         }
 
+        public void BaseFIUpdateAerodynamics(Part part)
+        {
+            base.UpdateAerodynamics(part);
+        }
 
         private static doublePartDelegate calculateDragValueOverride;
 
@@ -400,6 +422,11 @@ namespace ModularFI
             }
         }
 
+        public double BaseFICalculateDragValue(Part part)
+        {
+            return base.CalculateDragValue(part);
+        }
+
         private static voidDelegate updateThermalGraphOverride;
 
         public static bool RegisterUpdateThermalGraphOverride(voidDelegate dlg)
@@ -430,6 +457,11 @@ namespace ModularFI
             {
                 updateThermalGraphOverride(this);
             }
+        }
+
+        public void BaseFIUpdateThermalGraph()
+        {
+            base.UpdateThermalGraph();
         }
 
         private static voidDelegate updateConductionOverride;
@@ -464,6 +496,11 @@ namespace ModularFI
             }
         }
 
+        public void BaseFIUpdateConduction()
+        {
+            base.UpdateConduction();
+        }
+
         private static voidThermalDataDelegate updateConvectionOverride;
 
         public static bool RegisterUpdateConvectionOverride(voidThermalDataDelegate dlg)
@@ -496,6 +533,11 @@ namespace ModularFI
             }
         }
 
+        public void BaseFIUpdateConvection(PartThermalData ptd)
+        {
+            base.UpdateConvection(ptd);
+        }
+
         private static voidThermalDataDelegate updateRadiationOverride;
 
         public static bool RegisterUpdateRadiationOverride(voidThermalDataDelegate dlg)
@@ -526,6 +568,11 @@ namespace ModularFI
             {
                 updateRadiationOverride(this, ptd);
             }
+        }
+
+        public void BaseFIUpdateRadiation(PartThermalData ptd)
+        {
+            base.UpdateRadiation(ptd);
         }
 
         protected override double CalculateDragValue_Spherical(Part part)
@@ -580,6 +627,11 @@ namespace ModularFI
             }
         }
 
+        public double BaseFICalculateAerodynamicArea(Part part)
+        {
+            return base.CalculateAerodynamicArea(part);
+        }
+
         private static doublePartDelegate calculateAreaRadiativeOverride;
 
         public static bool RegisterCalculateAreaRadiativeOverride(doublePartDelegate dlg)
@@ -610,6 +662,11 @@ namespace ModularFI
             {
                 return calculateAreaRadiativeOverride(this, part);
             }
+        }
+
+        public double BaseFICalculateAreaRadiative(Part part)
+        {
+            return base.CalculateAreaRadiative(part);
         }
 
         private static doublePartDelegate calculateAreaExposedOverride;
@@ -644,6 +701,10 @@ namespace ModularFI
             }
         }
 
+        public double BaseFICalculateAreaExposed(Part part)
+        {
+            return base.CalculateAreaExposed(part);
+        }
 
         static void print(string msg)
         {
