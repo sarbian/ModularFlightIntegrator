@@ -12,7 +12,10 @@ namespace ModularFI
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
         public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<GameObject> pObjs, double atmDensity);
 
+        //This thing is here because the default FlightIntegrator is still applied to the first vessel loaded.
+        //So we need to sort through all the FlightIntegrators on start and remove it.  Fortunately, only having to do it on one makes things a lot
         static bool started = false;
+
         // Properties to access the FlightIntegrator protected field
         // Some should be readonly I guess
 
