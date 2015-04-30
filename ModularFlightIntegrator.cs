@@ -170,19 +170,19 @@ namespace ModularFI
 
         protected override void OnDestroy()
         {
-            print("OnDestroy");
+            //print("OnDestroy");
             base.OnDestroy();
         }
 
         protected override void HookVesselEvents()
         {
-            print("HookVesselEvents");
+            //print("HookVesselEvents");
             base.HookVesselEvents();
         }
 
         protected override void UnhookVesselEvents()
         {
-            print("UnhookVesselEvents");
+            //print("UnhookVesselEvents");
             base.UnhookVesselEvents();
         }
 
