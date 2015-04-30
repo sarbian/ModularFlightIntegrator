@@ -12,7 +12,7 @@ namespace ModularFI
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
         public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<GameObject> pObjs, double atmDensity);
 
-
+        static bool started = false;
         // Properties to access the FlightIntegrator protected field
         // Some should be readonly I guess
 
@@ -99,8 +99,9 @@ namespace ModularFI
         // Awake fire when getting to the Flight Scene, not sooner
         protected void Awake()
         {
-            VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
+
             string msg = "Awake. Current modules coVesselModule : \n";
+            VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
@@ -111,13 +112,34 @@ namespace ModularFI
 
         protected override void Start()
         {
-            string msg = "Start. Current modules coVesselModule : \n";
+            base.Start();
+            string msg;
+            if (!started)
+            {
+                msg = "Initial start; FlightIntegrator cleanup: \n";
+                if (vessel)
+                {
+                    FlightIntegrator[] integrators = vessel.GetComponents<FlightIntegrator>();
+                    for (int i = 0; i < integrators.Length; i++)
+                    {
+                        FlightIntegrator fi = integrators[i];
+                        if (fi == null)
+                            continue;
+                        msg += "  " + fi.GetType().ToString() + "\n";
+                        if (fi != this)
+                            GameObject.Destroy(fi);
+                    }
+                }
+                print(msg);
+                started = true;
+            } 
+            msg = "Start. Current modules coVesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
-            base.Start();
+
         }
 
         protected override void OnDestroy()
