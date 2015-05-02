@@ -90,6 +90,11 @@ namespace ModularFI
             set { sunLayerMask = value; }
         }
 
+        public List<PartThermalData> PartThermalDataList
+        {
+            get { return partThermalDataList; }
+        }
+
         public bool RecreateThermalGraph
         {
             get { return recreateThermalGraph; }
