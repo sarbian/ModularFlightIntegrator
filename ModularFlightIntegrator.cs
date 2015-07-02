@@ -130,9 +130,16 @@ namespace ModularFI
         // Awake fire when getting to the Flight Scene, not sooner
         protected void Awake()
         {
-
             string msg = "Awake. Current modules coVesselModule : \n";
-            VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
+
+            foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
+            {
+                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
+            }
+            print(msg);
+            
+            //VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
+            msg = "Awake Post Remove. Current modules coVesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
@@ -145,25 +152,8 @@ namespace ModularFI
         {
             base.Start();
             string msg;
-            if (!started)
-            {
-                msg = "Initial start; FlightIntegrator cleanup: \n";
-                if (vessel)
-                {
-                    FlightIntegrator[] integrators = vessel.GetComponents<FlightIntegrator>();
-                    for (int i = 0; i < integrators.Length; i++)
-                    {
-                        FlightIntegrator fi = integrators[i];
-                        if (fi == null)
-                            continue;
-                        msg += "  " + fi.GetType().ToString() + "\n";
-                        if (fi != this)
-                            GameObject.Destroy(fi);
-                    }
-                }
-                print(msg);
-                started = true;
-            } 
+
+
             msg = "Start. Current modules coVesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
@@ -171,42 +161,77 @@ namespace ModularFI
             }
             print(msg);
 
+            //if (!started)
+            //{
+            //    msg = "Initial start; FlightIntegrator cleanup: \n";
+            //    if (vessel)
+            //    {
+            //        FlightIntegrator[] integrators = vessel.GetComponents<FlightIntegrator>();
+            //        for (int i = 0; i < integrators.Length; i++)
+            //        {
+            //            FlightIntegrator fi = integrators[i];
+            //            if (fi == null)
+            //                continue;
+            //            msg += "  " + fi.GetType().ToString() + "\n";
+            //            if (fi != this)
+            //            {
+            //                msg += "Destroying " + fi.GetType() + "\n";
+            //                Destroy(fi);
+            //            }
+            //        }
+            //    }
+            //    print(msg);
+            //    started = true;
+            //} 
+            //msg = "Start Post Destroy. Current modules coVesselModule : \n";
+            //foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
+            //{
+            //    msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
+            //}
+            //print(msg);
+
+
+            msg = "Start. Vessel Component : \n";
+            foreach (var c in vessel.gameObject.GetComponents(typeof(Component)))
+            {
+                msg += "  " + c.GetType() + "\n";
+            }
+            print(msg);
         }
 
-        protected override void OnDestroy()
-        {
-            //print("OnDestroy");
-            base.OnDestroy();
-        }
-
-        protected override void HookVesselEvents()
-        {
-            //print("HookVesselEvents");
-            base.HookVesselEvents();
-        }
-
-        protected override void UnhookVesselEvents()
-        {
-            //print("UnhookVesselEvents");
-            base.UnhookVesselEvents();
-        }
-
+        //protected override void OnDestroy()
+        //{
+        //    //print("OnDestroy");
+        //    base.OnDestroy();
+        //}
+        //
+        //protected override void HookVesselEvents()
+        //{
+        //    //print("HookVesselEvents");
+        //    base.HookVesselEvents();
+        //}
+        //
+        //protected override void UnhookVesselEvents()
+        //{
+        //    //print("UnhookVesselEvents");
+        //    base.UnhookVesselEvents();
+        //}
+        //
         protected override void FixedUpdate()
         {
             // print("FixedUpdate");
-
+        
             // Update vessel values
-
+        
             // UpdateThermodynamics
-
+        
             // Copy values to part
-
+        
             // UpdateOcclusion
-
+        
             // Integrate Root part
-
+        
             // IntegratePhysicalObjects
-
             base.FixedUpdate();
         }
 
@@ -628,25 +653,25 @@ namespace ModularFI
             base.UpdateRadiation(ptd);
         }
 
-        protected override double CalculateDragValue_Spherical(Part part)
-        {
-            return base.CalculateDragValue_Spherical(part);
-        }
-
-        protected override double CalculateDragValue_Cylindrical(Part part)
-        {
-            return base.CalculateDragValue_Cylindrical(part);
-        }
-
-        protected override double CalculateDragValue_Conic(Part part)
-        {
-            return base.CalculateDragValue_Conic(part);
-        }
-
-        protected override double CalculateDragValue_Cube(Part part)
-        {
-            return base.CalculateDragValue_Cube(part);
-        }
+        //protected override double CalculateDragValue_Spherical(Part part)
+        //{
+        //    return base.CalculateDragValue_Spherical(part);
+        //}
+        //
+        //protected override double CalculateDragValue_Cylindrical(Part part)
+        //{
+        //    return base.CalculateDragValue_Cylindrical(part);
+        //}
+        //
+        //protected override double CalculateDragValue_Conic(Part part)
+        //{
+        //    return base.CalculateDragValue_Conic(part);
+        //}
+        //
+        //protected override double CalculateDragValue_Cube(Part part)
+        //{
+        //    return base.CalculateDragValue_Cube(part);
+        //}
 
         private static doublePartDelegate calculateAerodynamicAreaOverride;
 
