@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ModularFlightIntegrator
 {
@@ -30,16 +26,26 @@ namespace ModularFlightIntegrator
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
-
-
-            // TODO : clear the event ?
+          
             GameEvents.onVesselLoaded.Add(OnVesselLoad);
         }
+
+        //private void OnDestroy()
+        //{
+        //    GameEvents.onVesselLoaded.Remove(OnVesselLoad);
+        //}
 
         private void OnVesselLoad(Vessel v)
         {
             print("OnVesselLoad");
-            VesselModuleManager.RemoveModulesFromVessel(v);
+            //VesselModuleManager.RemoveModulesFromVessel(v);
+
+            VesselModule[] components = v.gameObject.GetComponents<ModularFI.ModularFlightIntegrator>();
+            for (int i = 0; i < components.Length; i++)
+            {
+                print("Destroying " + components[i].GetType());
+                Destroy(components[i]);
+            }
             VesselModuleManager.AddModulesToVessel(v);
 
             string msg = "OnVesselLoad. Vessel Component : \n";
