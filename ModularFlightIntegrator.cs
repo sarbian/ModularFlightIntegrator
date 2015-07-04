@@ -125,76 +125,16 @@ namespace ModularFI
             set { wasMachConvectionEnabled = value; }
         }
 
-
-
-        // Awake fire when getting to the Flight Scene, not sooner
-        protected void Awake()
-        {
-            string msg = "Awake. Current modules coVesselModule : \n";
-
-            foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
-            {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
-            }
-            print(msg);
-            
-            //VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
-            msg = "Awake Post Remove. Current modules coVesselModule : \n";
-            foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
-            {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
-            }
-            print(msg);
-
-        }
-
         protected override void Start()
         {
+            print("MFI Start");
             base.Start();
+            
             string msg;
-
-
             msg = "Start. Current modules coVesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
-            }
-            print(msg);
-
-            //if (!started)
-            //{
-            //    msg = "Initial start; FlightIntegrator cleanup: \n";
-            //    if (vessel)
-            //    {
-            //        FlightIntegrator[] integrators = vessel.GetComponents<FlightIntegrator>();
-            //        for (int i = 0; i < integrators.Length; i++)
-            //        {
-            //            FlightIntegrator fi = integrators[i];
-            //            if (fi == null)
-            //                continue;
-            //            msg += "  " + fi.GetType().ToString() + "\n";
-            //            if (fi != this)
-            //            {
-            //                msg += "Destroying " + fi.GetType() + "\n";
-            //                Destroy(fi);
-            //            }
-            //        }
-            //    }
-            //    print(msg);
-            //    started = true;
-            //} 
-            //msg = "Start Post Destroy. Current modules coVesselModule : \n";
-            //foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
-            //{
-            //    msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
-            //}
-            //print(msg);
-
-
-            msg = "Start. Vessel Component : \n";
-            foreach (var c in vessel.gameObject.GetComponents(typeof(Component)))
-            {
-                msg += "  " + c.GetType() + "\n";
             }
             print(msg);
         }
@@ -447,7 +387,6 @@ namespace ModularFI
             // CalculateAerodynamicArea
             // CalculateAreaRadiative
             // CalculateAreaExposed
-
             if (updateAerodynamicsOverride == null)
             {
                 base.UpdateAerodynamics(part);

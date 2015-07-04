@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace ModularFlightIntegrator
 {
@@ -8,19 +9,9 @@ namespace ModularFlightIntegrator
     {
         private void Start()
         {
-            string msg = "MFIManager Start " + HighLogic.LoadedScene + ". Current modules coVesselModule : \n";
-
-            foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
-            {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
-            }
-            print(msg);
-            
             VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
-            //VesselModuleManager.SetWrapperActive(typeof(ModularFI.ModularFlightIntegrator), false);
-            //VesselModuleManager.SetWrapperActive(typeof(FlightIntegrator), false);
 
-            msg = "MFIManager Start Post RemoveModuleOfType. Current modules coVesselModule : \n";
+            string msg = "MFIManager Start Post RemoveModuleOfType. Current modules coVesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
                 msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
@@ -30,30 +21,17 @@ namespace ModularFlightIntegrator
             GameEvents.onVesselLoaded.Add(OnVesselLoad);
         }
 
-        //private void OnDestroy()
-        //{
-        //    GameEvents.onVesselLoaded.Remove(OnVesselLoad);
-        //}
 
+        // Vessel Loading initialize the VesselModule and PartModule in a different order than Vessel Creation
+        // This hack allow the MFI to be created after the PartModule
         private void OnVesselLoad(Vessel v)
         {
-            print("OnVesselLoad");
-            //VesselModuleManager.RemoveModulesFromVessel(v);
-
-            VesselModule[] components = v.gameObject.GetComponents<ModularFI.ModularFlightIntegrator>();
-            for (int i = 0; i < components.Length; i++)
+            ModularFI.ModularFlightIntegrator mfi = v.gameObject.GetComponents<ModularFI.ModularFlightIntegrator>().FirstOrDefault();
+            if (mfi != null)
             {
-                print("Destroying " + components[i].GetType());
-                Destroy(components[i]);
+                DestroyImmediate(mfi);
+                VesselModuleManager.AddModulesToVessel(v);
             }
-            VesselModuleManager.AddModulesToVessel(v);
-
-            string msg = "OnVesselLoad. Vessel Component : \n";
-            foreach (var c in v.gameObject.GetComponents(typeof(Component)))
-            {
-                msg += "  " + c.GetType() + "\n";
-            }
-            print(msg);
         }
 
     }
