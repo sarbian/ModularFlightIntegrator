@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ModularFI
@@ -30,15 +31,13 @@ namespace ModularFI
     {
 
         public delegate void voidDelegate(ModularFlightIntegrator fi);
+        public delegate double doubleDelegate(ModularFlightIntegrator fi);
         public delegate void voidPartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
+        public delegate double doubleThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
         public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<GameObject> pObjs, double atmDensity);
-
-        //This thing is here because the default FlightIntegrator is still applied to the first vessel loaded.
-        //So we need to sort through all the FlightIntegrators on start and remove it.  Fortunately, only having to do it on one makes things a lot
-        static bool started = false;
-
+        
         // Properties to access the FlightIntegrator protected field
         // Some should be readonly I guess
 
@@ -106,11 +105,11 @@ namespace ModularFI
             get { return partThermalDataCount; }
             set { partThermalDataCount = value; }
         }
-
-        public bool IsAnalytical
+        
+        public double FDeltaTime
         {
-            get { return isAnalytical; }
-            set { isAnalytical = value; }
+            get { return fDeltaTime; }
+            // set { fDeltaTime = value; } // I feel a set here is a recipe for disaster
         }
 
         public double WarpReciprocal
@@ -125,16 +124,16 @@ namespace ModularFI
             set { wasMachConvectionEnabled = value; }
         }
 
-        protected override void Start()
+        public override void Start()
         {
             print("MFI Start");
             base.Start();
-            
+
             string msg;
-            msg = "Start. Current modules coVesselModule : \n";
-            foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
+            msg = "Start. VesselModule on vessel : \n";
+            foreach (VesselModule vm in vessel.gameObject.GetComponents<VesselModule>())
             {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
+                msg += "  " + vm.GetType().Name.ToString()+"\n";
             }
             print(msg);
         }
@@ -157,24 +156,66 @@ namespace ModularFI
         //    base.UnhookVesselEvents();
         //}
         //
-        protected override void FixedUpdate()
+
+        // TODO : VesselPrecalculate
+        //protected override void VesselPrecalculate()
+        //{
+        //}
+
+        //protected override void FixedUpdate()
+        //{
+        //    // print("FixedUpdate");
+        //
+        //    // Update vessel values
+        //
+        //    // UpdateThermodynamics
+        //
+        //    // Copy values to part
+        //
+        //    // UpdateOcclusion
+        //
+        //    // Integrate Root part
+        //
+        //    // IntegratePhysicalObjects
+        //    base.FixedUpdate();
+        //}
+
+        private static doubleDelegate calculateShockTemperatureOverride;
+
+        public static bool RegisterCalculateShockTemperature(doubleDelegate dlg)
         {
-            // print("FixedUpdate");
-        
-            // Update vessel values
-        
-            // UpdateThermodynamics
-        
-            // Copy values to part
-        
-            // UpdateOcclusion
-        
-            // Integrate Root part
-        
-            // IntegratePhysicalObjects
-            base.FixedUpdate();
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+            if (calculateShockTemperatureOverride == null)
+            {
+                calculateShockTemperatureOverride = dlg;
+                return true;
+            }
+
+            print("CalculateShockTemperature already has an override");
+            return false;
         }
 
+        public override double CalculateShockTemperature()
+        {
+            if (calculateShockTemperatureOverride == null)
+            {
+                return base.CalculateShockTemperature();
+            }
+            else
+            {
+                return calculateShockTemperatureOverride(this);
+            }
+        }
+
+        public double BaseFICalculateShockTemperature()
+        {
+            return base.CalculateShockTemperature();
+        }
+        
         private static voidDelegate updateThermodynamicsOverride;
         private static voidDelegate updateThermodynamicsPre;
         private static voidDelegate updateThermodynamicsPost;
@@ -243,6 +284,44 @@ namespace ModularFI
             base.UpdateThermodynamics();
         }
 
+        //TODO : public virtual void ThermalIntegrationPass(bool averageWithPrevious)
+
+        private static doubleDelegate calculateAnalyticTemperatureOverride;
+
+        public static bool RegisterCalculateAnalyticTemperature(doubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+            if (calculateAnalyticTemperatureOverride == null)
+            {
+                calculateAnalyticTemperatureOverride = dlg;
+                return true;
+            }
+
+            print("CalculateAnalyticTemperature already has an override");
+            return false;
+        }
+
+        public override double CalculateAnalyticTemperature()
+        {
+            if (calculateAnalyticTemperatureOverride == null)
+            {
+                return base.CalculateAnalyticTemperature();
+            }
+            else
+            {
+                return calculateAnalyticTemperatureOverride(this);
+            }
+        }
+
+        public double BaseFICalculateAnalyticTemperature()
+        {
+            return base.CalculateAnalyticTemperature();
+        }
+
         private static voidDelegate updateOcclusionOverride;
 
         public static bool RegisterUpdateOcclusionOverride(voidDelegate dlg)
@@ -288,7 +367,6 @@ namespace ModularFI
             {
                 print("You can only register on the SPACECENTER scene");
             }
-
 
             if (integrateOverride == null)
             {
@@ -359,6 +437,118 @@ namespace ModularFI
         {
             base.IntegratePhysicalObjects(pObjs, atmDensity);
         }
+        
+        private static voidDelegate calculatePressureOverride;
+
+        public static bool RegisterCalculatePressureOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculatePressureOverride == null)
+            {
+                calculatePressureOverride = dlg;
+                return true;
+            }
+
+            print("CalculatePressure already has an override");
+            return false;
+        }
+
+        protected override void CalculatePressure()
+        {
+            if (calculatePressureOverride == null)
+            {
+                base.CalculatePressure();
+            }
+            else
+            {
+                calculatePressureOverride(this);
+            }
+        }
+
+        public void BaseFICalculatePressure()
+        {
+            base.CalculatePressure();
+        }
+        
+        private static voidDelegate calculateSunBodyFluxOverride;
+        private static voidDelegate calculateSunBodyFluxPre;
+        private static voidDelegate calculateSunBodyFluxPost;
+
+        public static bool RegisterCalculateSunBodyFluxOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateSunBodyFluxOverride == null)
+            {
+                calculateSunBodyFluxOverride = dlg;
+                return true;
+            }
+
+            print("CalculatePressure already has an override");
+            return false;
+        }
+
+        public static void RegisterCalculateSunBodyFluxPre(voidDelegate dlg)
+        {
+            calculateSunBodyFluxPre += dlg;
+        }
+
+        public static void RegisterCalculateSunBodyFluxPost(voidDelegate dlg)
+        {
+            calculateSunBodyFluxPost += dlg;
+        }
+
+        protected override void CalculateSunBodyFlux()
+        {
+            if (calculateSunBodyFluxOverride != null)
+            {
+                calculateSunBodyFluxPre(this);
+            }
+
+            if (calculateSunBodyFluxOverride == null)
+            {
+                base.CalculateSunBodyFlux();
+            }
+            else
+            {
+                calculateSunBodyFluxOverride(this);
+            }
+
+            if (calculateSunBodyFluxPost != null)
+            {
+                calculateSunBodyFluxPost(this);
+            }
+        }
+
+        public void BaseFICalculateSunBodyFlux()
+        {
+            base.CalculateSunBodyFlux();
+        }
+
+
+        // TODO : CalculateDensityThermalLerp
+
+        // TODO : CalculateBackgroundRadiationTemperature
+
+        // TODO : CalculateConstantsVacuum
+
+        // TODO : CalculateConstantsAtmosphere
+
+        // TODO : CalculateShockTemperature
+        
+        // TODO : CalculateConvectiveCoefficient
+        // TODO : CalculateConvectiveCoefficientNewtonian
+        // TODO : CalculateConvectiveCoefficientMach
+
 
         private static voidPartDelegate updateAerodynamicsOverride;
 
@@ -481,6 +671,79 @@ namespace ModularFI
             base.UpdateThermalGraph();
         }
 
+        
+        private static voidDelegate updateCompoundPartsOverride;
+
+        public static bool RegisterUpdateCompoundParts(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+            if (updateCompoundPartsOverride == null)
+            {
+                updateCompoundPartsOverride = dlg;
+                return true;
+            }
+
+            print("UpdateCompoundParts already has an override");
+            return false;
+        }
+
+        public override void UpdateCompoundParts()
+        {
+            if (updateCompoundPartsOverride == null)
+            {
+                base.UpdateCompoundParts();
+            }
+            else
+            {
+                updateCompoundPartsOverride(this);
+            }
+        }
+
+        public void BaseFIUpdateCompoundParts()
+        {
+            base.UpdateCompoundParts();
+        }
+        
+        private static voidThermalDataDelegate setSkinPropertiesOverride;
+
+        public static bool RegisterSetSkinProperties(voidThermalDataDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+            if (setSkinPropertiesOverride == null)
+            {
+                setSkinPropertiesOverride = dlg;
+                return true;
+            }
+
+            print("UpdateCompoundParts already has an override");
+            return false;
+        }
+
+        public override void SetSkinProperties(PartThermalData ptd)
+        {
+            if (setSkinPropertiesOverride == null)
+            {
+                base.SetSkinProperties(ptd);
+            }
+            else
+            {
+                setSkinPropertiesOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIetSkinPropertie(PartThermalData ptd)
+        {
+            base.SetSkinProperties(ptd);
+        }
+
         private static voidDelegate updateConductionOverride;
 
         public static bool RegisterUpdateConductionOverride(voidDelegate dlg)
@@ -501,7 +764,7 @@ namespace ModularFI
             return false;
         }
 
-        protected override void UpdateConduction()
+        public override void UpdateConduction()
         {
             if (updateConductionOverride == null)
             {
@@ -517,6 +780,11 @@ namespace ModularFI
         {
             base.UpdateConduction();
         }
+
+
+        // TODO : public virtual double GetUnifiedSkinTemp
+
+        // TODO : UnifySkinTemp
 
         private static voidThermalDataDelegate updateConvectionOverride;
 
@@ -538,22 +806,22 @@ namespace ModularFI
             return false;
         }
 
-        protected override void UpdateConvection(PartThermalData ptd)
-        {
-            if (updateConvectionOverride == null)
-            {
-                base.UpdateConvection(ptd);
-            }
-            else
-            {
-                updateConvectionOverride(this, ptd);
-            }
-        }
-
-        public void BaseFIUpdateConvection(PartThermalData ptd)
-        {
-            base.UpdateConvection(ptd);
-        }
+        //protected override void UpdateConvection(PartThermalData ptd)
+        //{
+        //    if (updateConvectionOverride == null)
+        //    {
+        //        base.UpdateConvection(ptd);
+        //    }
+        //    else
+        //    {
+        //        updateConvectionOverride(this, ptd);
+        //    }
+        //}
+        //
+        //public void BaseFIUpdateConvection(PartThermalData ptd)
+        //{
+        //    base.UpdateConvection(ptd);
+        //}
 
         private static voidThermalDataDelegate updateRadiationOverride;
 
@@ -575,7 +843,7 @@ namespace ModularFI
             return false;
         }
 
-        protected override void UpdateRadiation(PartThermalData ptd)
+        public override void UpdateRadiation(PartThermalData ptd)
         {
             if (updateRadiationOverride == null)
             {
@@ -591,6 +859,89 @@ namespace ModularFI
         {
             base.UpdateRadiation(ptd);
         }
+
+        // 
+
+        private static doubleThermalDataDelegate updateGetSunAreaOverride;
+
+        public static bool RegisterGetSunAreaOverride(doubleThermalDataDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (updateGetSunAreaOverride == null)
+            {
+                updateGetSunAreaOverride = dlg;
+                return true;
+            }
+
+            print("GetSunArea already has an override");
+            return false;
+        }
+
+        public override double GetSunArea(PartThermalData ptd)
+        {
+            if (updateGetSunAreaOverride == null)
+            {
+                return base.GetSunArea(ptd);
+            }
+            else
+            {
+                return updateGetSunAreaOverride(this, ptd);
+            }
+        }
+
+        public double BaseFIGetSunArea(PartThermalData ptd)
+        {
+            return base.GetSunArea(ptd);
+        }
+
+        //
+
+        private static doubleThermalDataDelegate getBodyAreaOverride;
+
+        public static bool RegisterGetBodyAreaOverride(doubleThermalDataDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (getBodyAreaOverride == null)
+            {
+                getBodyAreaOverride = dlg;
+                return true;
+            }
+
+            print("GetBodyArea already has an override");
+            return false;
+        }
+
+        public override double GetBodyArea(PartThermalData ptd)
+        {
+            if (getBodyAreaOverride == null)
+            {
+                return base.GetBodyArea(ptd);
+            }
+            else
+            {
+                return getBodyAreaOverride(this, ptd);
+            }
+        }
+
+        public double BaseFIBodyArea(PartThermalData ptd)
+        {
+            return base.GetBodyArea(ptd);
+        }
+        //
+
+
+
+
 
         //protected override double CalculateDragValue_Spherical(Part part)
         //{

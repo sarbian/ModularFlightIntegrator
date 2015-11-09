@@ -3,36 +3,26 @@ using UnityEngine;
 
 namespace ModularFlightIntegrator
 {
-
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class MFIManager: MonoBehaviour
     {
         private void Start()
         {
-            VesselModuleManager.RemoveModuleOfType(typeof(FlightIntegrator));
+            var fiw = VesselModuleManager.GetWrapper(typeof (FlightIntegrator));
+            if (fiw != null && fiw.active)
+            {
+                print("[MFIManager] FlightIntegrator is active. Deactivating it");
 
-            string msg = "MFIManager Start Post RemoveModuleOfType. Current modules coVesselModule : \n";
+                VesselModuleManager.RemoveModuleOfType(typeof (FlightIntegrator));
+            }
+            // Should we display this only if we deactivated the stock FI ?
+            string msg = "[MFIManager] Current active VesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active + " order=" + vesselModuleWrapper.order + "\n";
+                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active +
+                       " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
-          
-            GameEvents.onVesselLoaded.Add(OnVesselLoad);
         }
-
-
-        // Vessel Loading initialize the VesselModule and PartModule in a different order than Vessel Creation
-        // This hack allow the MFI to be created after the PartModule
-        private void OnVesselLoad(Vessel v)
-        {
-            ModularFI.ModularFlightIntegrator mfi = v.gameObject.GetComponents<ModularFI.ModularFlightIntegrator>().FirstOrDefault();
-            if (mfi != null)
-            {
-                DestroyImmediate(mfi);
-                VesselModuleManager.AddModulesToVessel(v);
-            }
-        }
-
     }
 }
