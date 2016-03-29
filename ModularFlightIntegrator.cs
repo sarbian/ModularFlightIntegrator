@@ -31,6 +31,7 @@ namespace ModularFI
     {
 
         public delegate void voidDelegate(ModularFlightIntegrator fi);
+        public delegate void voidBoolDelegate(ModularFlightIntegrator fi, bool b);
         public delegate double doubleDelegate(ModularFlightIntegrator fi);
         public delegate void voidPartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
@@ -112,12 +113,30 @@ namespace ModularFI
             // set { fDeltaTime = value; } // I feel a set here is a recipe for disaster
         }
 
-        public double WarpReciprocal
+        public double FDeltaTimeRecip
         {
-            get { return warpReciprocal; }
-            set { warpReciprocal = value; }
+            get { return fDeltaTimeRecip; }
+            set { fDeltaTimeRecip = value; }
         }
 
+        public double DeltaTime
+        {
+            get { return deltaTime; }
+            set { deltaTime = value; }
+        }
+
+        public double FTimeSinceThermo
+        {
+            get { return fTimeSinceThermo; }
+            set { fTimeSinceThermo = value; }
+        }
+
+        public double FTimeSinceThermoRecip
+        {
+            get { return fTimeSinceThermoRecip; }
+            set { fTimeSinceThermoRecip = value; }
+        }
+        
         public bool WasMachConvectionEnabled
         {
             get { return wasMachConvectionEnabled; }
@@ -322,9 +341,9 @@ namespace ModularFI
             return base.CalculateAnalyticTemperature();
         }
 
-        private static voidDelegate updateOcclusionOverride;
+        private static voidBoolDelegate updateOcclusionOverride;
 
-        public static bool RegisterUpdateOcclusionOverride(voidDelegate dlg)
+        public static bool RegisterUpdateOcclusionOverride(voidBoolDelegate dlg)
         {
             if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
@@ -342,21 +361,21 @@ namespace ModularFI
             return false;
         }
 
-        protected override void UpdateOcclusion()
+        protected override void UpdateOcclusion(bool all)
         {
             if (updateOcclusionOverride == null)
             {
-                base.UpdateOcclusion();
+                base.UpdateOcclusion(all);
             }
             else
             {
-                updateOcclusionOverride(this);
+                updateOcclusionOverride(this, all);
             }
         }
 
-        public void BaseFIUpdateOcclusion()
+        public void BaseFIUpdateOcclusion(bool all)
         {
-            base.UpdateOcclusion();
+            base.UpdateOcclusion(all);
         }
 
         private static voidPartDelegate integrateOverride;
