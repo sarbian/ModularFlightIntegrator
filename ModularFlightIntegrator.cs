@@ -65,13 +65,7 @@ namespace ModularFI
             get { return vessel; }
             set { vessel = value; }
         }
-
-        public PhysicsGlobals.LiftingSurfaceCurve LiftCurves
-        {
-            get { return liftCurves; }
-            set { liftCurves = value; }
-        }
-
+        
         public double DensityThermalLerp
         {
             get { return densityThermalLerp; }
