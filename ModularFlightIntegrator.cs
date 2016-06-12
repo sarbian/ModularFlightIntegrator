@@ -506,7 +506,7 @@ namespace ModularFI
                 return true;
             }
 
-            print("CalculatePressure already has an override");
+            print("CalculateSunBodyFlux already has an override");
             return false;
         }
 
@@ -522,7 +522,7 @@ namespace ModularFI
 
         protected override void CalculateSunBodyFlux()
         {
-            if (calculateSunBodyFluxOverride != null)
+            if (calculateSunBodyFluxPre != null)
             {
                 calculateSunBodyFluxPre(this);
             }
