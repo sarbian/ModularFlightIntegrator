@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace ModularFlightIntegrator
+namespace ModularFI
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class MFIManager: MonoBehaviour
