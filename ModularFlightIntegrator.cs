@@ -37,7 +37,7 @@ namespace ModularFI
         public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
         public delegate double doubleThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
-        public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<GameObject> pObjs, double atmDensity);
+        public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<physicalObject> pObjs, double atmDensity);
         
         // Properties to access the FlightIntegrator protected field
         // Some should be readonly I guess
@@ -434,7 +434,7 @@ namespace ModularFI
             return false;
         }
 
-        protected override void IntegratePhysicalObjects(List<GameObject> pObjs, double atmDensity)
+        protected override void IntegratePhysicalObjects(List<physicalObject> pObjs, double atmDensity)
         {
             if (integratePhysicalObjectsOverride == null)
             {
@@ -446,7 +446,7 @@ namespace ModularFI
             }
         }
 
-        public void BaseFIIntegratePhysicalObjects(List<GameObject> pObjs, double atmDensity)
+        public void BaseFIIntegratePhysicalObjects(List<physicalObject> pObjs, double atmDensity)
         {
             base.IntegratePhysicalObjects(pObjs, atmDensity);
         }
