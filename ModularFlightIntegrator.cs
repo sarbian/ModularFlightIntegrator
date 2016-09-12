@@ -148,6 +148,7 @@ namespace ModularFI
             {
                 msg += "  " + vm.GetType().Name.ToString()+"\n";
             }
+            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FashionablyLate, base.FixedUpdate);
             print(msg);
         }
 
@@ -175,23 +176,10 @@ namespace ModularFI
         //{
         //}
 
-        //protected override void FixedUpdate()
-        //{
-        //    // print("FixedUpdate");
-        //
-        //    // Update vessel values
-        //
-        //    // UpdateThermodynamics
-        //
-        //    // Copy values to part
-        //
-        //    // UpdateOcclusion
-        //
-        //    // Integrate Root part
-        //
-        //    // IntegratePhysicalObjects
-        //    base.FixedUpdate();
-        //}
+        protected override void FixedUpdate()
+        {
+            // Be lazy
+        }
 
         private static doubleDelegate calculateShockTemperatureOverride;
 
@@ -450,7 +438,7 @@ namespace ModularFI
         {
             base.IntegratePhysicalObjects(pObjs, atmDensity);
         }
-        
+
         private static voidDelegate calculatePressureOverride;
 
         public static bool RegisterCalculatePressureOverride(voidDelegate dlg)
