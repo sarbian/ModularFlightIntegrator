@@ -13,7 +13,7 @@ namespace ModularFI
             {
                 print("[MFIManager] FlightIntegrator is active. Deactivating it");
 
-                VesselModuleManager.RemoveModuleOfType(typeof (FlightIntegrator));
+                VesselModuleManager.SetWrapperActive(typeof (FlightIntegrator), false);
             }
             // Should we display this only if we deactivated the stock FI ?
             string msg = "[MFIManager] Current active VesselModule : \n";
