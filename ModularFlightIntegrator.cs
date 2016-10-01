@@ -137,16 +137,15 @@ namespace ModularFI
             set { wasMachConvectionEnabled = value; }
         }
 
-        public override void Start()
+        protected override void OnStart()
         {
             print("MFI Start");
-            base.Start();
+            base.OnStart();
 
-            string msg;
-            msg = "Start. VesselModule on vessel : \n";
+            string msg = "Start. VesselModule on vessel : \n";
             foreach (VesselModule vm in vessel.gameObject.GetComponents<VesselModule>())
             {
-                msg += "  " + vm.GetType().Name.ToString()+"\n";
+                msg += "  " + vm.GetType().Name + "\n";
             }
             TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FashionablyLate, base.FixedUpdate);
             print(msg);
