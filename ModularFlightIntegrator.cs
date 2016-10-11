@@ -148,7 +148,8 @@ namespace ModularFI
             {
                 msg += "  " + vm.GetType().Name + "\n";
             }
-            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FashionablyLate, base.FixedUpdate);
+            // Register our replacement FixedUpdate to run at the same timing as the stock FlightIntegrator
+            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
             print(msg);
         }
 
@@ -194,9 +195,17 @@ namespace ModularFI
             return false;
         }
 
+        // We want the FixedUpdate code to run exactly when we want (after vessel and partmodule).
+        // The stock game uses a Unity settings to force the execution order
+        // Mods can not use that but can register with TimingManager.FixedUpdateAdd, called in OnStart here.
+        // replace our FixedUpdate with something that does nothing since we will call TimedFixedUpdate
         protected override void FixedUpdate()
         {
-            // Be lazy
+            // Empty on purpose, see comment
+        }
+
+        private void TimedFixedUpdate()
+        {
 
             if(fixedUpdateOverride == null)
             {
