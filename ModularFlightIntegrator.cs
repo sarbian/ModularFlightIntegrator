@@ -175,10 +175,37 @@ namespace ModularFI
         //protected override void VesselPrecalculate()
         //{
         //}
+        private static voidDelegate fixedUpdateOverride;
+
+        public static bool RegisterFixedUpdateOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+            if (fixedUpdateOverride == null)
+            {
+                fixedUpdateOverride = dlg;
+                return true;
+            }
+
+            print("FixedUpdate already has an override");
+            return false;
+        }
 
         protected override void FixedUpdate()
         {
             // Be lazy
+
+            if(fixedUpdateOverride == null)
+            {
+                base.FixedUpdate();
+            }
+            else
+            {
+                fixedUpdateOverride(this);
+            }
         }
 
         private static doubleDelegate calculateShockTemperatureOverride;
