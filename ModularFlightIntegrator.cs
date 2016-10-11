@@ -33,6 +33,7 @@ namespace ModularFI
         public delegate void voidDelegate(ModularFlightIntegrator fi);
         public delegate void voidBoolDelegate(ModularFlightIntegrator fi, bool b);
         public delegate double doubleDelegate(ModularFlightIntegrator fi);
+        public delegate double doubleDoubleDelegate(ModularFlightIntegrator fi, double d);
         public delegate void voidPartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
@@ -60,11 +61,11 @@ namespace ModularFI
             set { currentMainBody = value; }
         }
 
-        public Vessel Vessel
+        /*public Vessel Vessel
         {
             get { return vessel; }
             set { vessel = value; }
-        }
+        }*/
         
         public double DensityThermalLerp
         {
@@ -373,7 +374,7 @@ namespace ModularFI
                 integrateOverride = dlg;
                 return true;
             }
-
+            
             print("Integrate already has an override");
             return false;
         }
@@ -536,19 +537,232 @@ namespace ModularFI
 
 
         // TODO : CalculateDensityThermalLerp
+        private static doubleDelegate calculateDensityThermalLerpOverride;
+
+        public static bool RegisterCalculateDensityThermalLerpOverride(doubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateDensityThermalLerpOverride == null)
+            {
+                calculateDensityThermalLerpOverride = dlg;
+                return true;
+            }
+
+            print("CalculateDensityThermalLerp already has an override");
+            return false; 
+        }
+
+        public override double CalculateDensityThermalLerp()
+        {
+            if (calculateDensityThermalLerpOverride == null)
+            {
+                return base.CalculateDensityThermalLerp();
+            }
+            else
+            {
+                return calculateDensityThermalLerpOverride(this);
+            }
+        }
 
         // TODO : CalculateBackgroundRadiationTemperature
+        private static doubleDoubleDelegate calculateBackgroundRadiationTemperatureOverride;
 
+        public static bool RegisterCalculateBackgroundRadiationTemperatureOverride(doubleDoubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateBackgroundRadiationTemperatureOverride == null)
+            {
+                calculateBackgroundRadiationTemperatureOverride = dlg;
+                return true;
+            }
+
+            print("CalculateBackgroundRadiationTemperature already has an override");
+            return false;
+        }
+
+        protected override double CalculateBackgroundRadiationTemperature(double d)
+        {
+            if (calculateBackgroundRadiationTemperatureOverride == null)
+            {
+                return base.CalculateBackgroundRadiationTemperature(d);
+            }
+            else
+            {
+                return calculateBackgroundRadiationTemperatureOverride(this, d);
+            }
+        }
         // TODO : CalculateConstantsVacuum
+        private static voidDelegate calculateConstantsVacuumOverride;
 
+        public static bool RegisterCalculateConstantsVacuumOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateConstantsVacuumOverride == null)
+            {
+                calculateConstantsVacuumOverride = dlg;
+                return true;
+            }
+
+            print("CalculateConstantsVacuum already has an override");
+            return false;
+        }
+
+        protected override void CalculateConstantsVacuum()
+        {
+            if (calculateConstantsVacuumOverride == null)
+            {
+                base.CalculateConstantsVacuum();
+            }
+            else
+            {
+                calculateConstantsVacuumOverride(this);
+            }
+        }
         // TODO : CalculateConstantsAtmosphere
+        private static voidDelegate calculateConstantsAtmosphereOverride;
 
-        // TODO : CalculateShockTemperature
-        
+        public static bool RegistercalculateConstantsAtmosphereOverride(voidDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateConstantsAtmosphereOverride == null)
+            {
+                calculateConstantsAtmosphereOverride = dlg;
+                return true;
+            }
+
+            print("CalculateConstantsAtmosphere already has an override");
+            return false;
+        }
+
+        protected override void CalculateConstantsAtmosphere()
+        {
+            if (calculateConstantsAtmosphereOverride == null)
+            {
+                base.CalculateConstantsAtmosphere();
+            }
+            else
+            {
+                calculateConstantsAtmosphereOverride(this);
+            }
+        }
+
         // TODO : CalculateConvectiveCoefficient
-        // TODO : CalculateConvectiveCoefficientNewtonian
-        // TODO : CalculateConvectiveCoefficientMach
+        private static doubleDelegate calculateConvectiveCoefficientOverride;
 
+        public static bool RegisterCalculateConvectiveCoefficientOverride(doubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateConvectiveCoefficientOverride == null)
+            {
+                calculateConvectiveCoefficientOverride = dlg;
+                return true;
+            }
+
+            print("CalculateConvectiveCoefficient already has an override");
+            return false;
+        }
+
+        protected override double CalculateConvectiveCoefficient()
+        {
+            if (calculateConvectiveCoefficientOverride == null)
+            {
+                return base.CalculateConvectiveCoefficient();
+            }
+            else
+            {
+                return calculateConvectiveCoefficientOverride(this);
+            }
+        }
+        
+        // TODO : CalculateConvectiveCoefficientNewtonian
+        private static doubleDelegate calculateConvectiveCoefficientNewtonianOverride;
+
+        public static bool RegisterCalculateConvectiveCoefficientNewtonianOverride(doubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateConvectiveCoefficientNewtonianOverride == null)
+            {
+                calculateConvectiveCoefficientNewtonianOverride = dlg;
+                return true;
+            }
+
+            print("CalculateConvectiveCoefficientNewtonian already has an override");
+            return false;
+        }
+
+        protected override double CalculateConvectiveCoefficientNewtonian()
+        {
+            if (calculateConvectiveCoefficientNewtonianOverride == null)
+            {
+                return base.CalculateConvectiveCoefficientNewtonian();
+            }
+            else
+            {
+                return calculateConvectiveCoefficientNewtonianOverride(this);
+            }
+        }
+        // TODO : CalculateConvectiveCoefficientMach
+        private static doubleDelegate calculateConvectiveCoefficientMachOverride;
+
+        public static bool RegisterCalculateConvectiveCoefficientMachOverride(doubleDelegate dlg)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                print("You can only register on the SPACECENTER scene");
+            }
+
+
+            if (calculateConvectiveCoefficientMachOverride == null)
+            {
+                calculateConvectiveCoefficientMachOverride = dlg;
+                return true;
+            }
+
+            print("CalculateConvectiveCoefficientMach already has an override");
+            return false;
+        }
+
+        protected override double CalculateConvectiveCoefficientMach()
+        {
+            if (calculateConvectiveCoefficientMachOverride == null)
+            {
+                return base.CalculateConvectiveCoefficientMach();
+            }
+            else
+            {
+                return calculateConvectiveCoefficientMachOverride(this);
+            }
+        }
 
         private static voidPartDelegate updateAerodynamicsOverride;
 
