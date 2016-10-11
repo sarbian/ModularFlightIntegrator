@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ModularFI
 {
@@ -23,6 +22,18 @@ namespace ModularFI
                        " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
+
+            GameEvents.onVesselPrecalcAssign.Add(AddModularPrecalc);
+        }
+
+        private void OnDestroy()
+        {
+            GameEvents.onVesselPrecalcAssign.Remove(AddModularPrecalc);
+        }
+
+        private void AddModularPrecalc(Vessel vessel)
+        {
+            vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
         }
     }
 }

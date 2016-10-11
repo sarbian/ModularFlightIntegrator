@@ -22,7 +22,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace ModularFI
@@ -149,15 +148,18 @@ namespace ModularFI
                 msg += "  " + vm.GetType().Name + "\n";
             }
             // Register our replacement FixedUpdate to run at the same timing as the stock FlightIntegrator
+            TimingManager.UpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
             TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
             print(msg);
         }
 
-        //protected override void OnDestroy()
-        //{
-        //    //print("OnDestroy");
-        //    base.OnDestroy();
-        //}
+        protected override void OnDestroy()
+        {
+            TimingManager.UpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
+            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
+            base.OnDestroy();
+        }
+
         //
         //protected override void HookVesselEvents()
         //{
@@ -215,6 +217,16 @@ namespace ModularFI
             {
                 fixedUpdateOverride(this);
             }
+        }
+
+        public override void Update()
+        {
+            // Empty on purpose, see comment of FixedUpdate
+        }
+
+        private void TimedUpdate()
+        {
+            base.FixedUpdate();
         }
 
         private static doubleDelegate calculateShockTemperatureOverride;
