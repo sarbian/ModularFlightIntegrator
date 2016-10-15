@@ -226,7 +226,7 @@ namespace ModularFI
 
         private void TimedUpdate()
         {
-            base.FixedUpdate();
+            base.Update();
         }
 
         private static doubleDelegate calculateShockTemperatureOverride;
