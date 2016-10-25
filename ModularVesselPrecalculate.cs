@@ -26,7 +26,8 @@ namespace ModularFI
 
         public void TimedFixedUpdate()
         {
-            base.FixedUpdate();
+            if (gameObject.activeInHierarchy)
+                base.FixedUpdate();
         }
 
         public override void Update()
@@ -41,7 +42,8 @@ namespace ModularFI
         /// </summary>
         public void TimedUpdate()
         {
-            base.Update();
+            if (gameObject.activeInHierarchy)
+                base.Update();
         }
 
 
