@@ -1,9 +1,12 @@
 ﻿using System;
+using UnityEngine;
 
 namespace ModularFI
 {
     class ModularVesselPrecalculate : VesselPrecalculate
     {
+        private float lastMainPhysics = 0;
+
         public override void Awake()
         {
             TimingManager.UpdateAdd(TimingManager.TimingStage.Precalc, TimedUpdate);
@@ -94,17 +97,23 @@ namespace ModularFI
             print("MainPhysics already has an override");
             return false;
         }
-
+        
         /// <summary>
         /// Does the main physics calls. Run from fixed update. Bits run in Update.
         /// </summary>
         /// <param name="doKillChecks">Do we check if the vessel should be killed?</param>
         public override void MainPhysics(bool doKillChecks)
         {
+            // Prevents ruuning twice in the the same frame. Needed by Principia
+            if (lastMainPhysics == Time.fixedTime)
+                return;
+
             if (mainPhysicsOverride != null)
                 mainPhysicsOverride(doKillChecks);
             else
                 base.MainPhysics(doKillChecks);
+
+            lastMainPhysics = Time.fixedTime;
         }
 
         private static Action applyVelocityCorrectionOverride;
