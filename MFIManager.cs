@@ -2,9 +2,14 @@
 
 namespace ModularFI
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class MFIManager: MonoBehaviour
     {
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
+
         private void Start()
         {
             var fiw = VesselModuleManager.GetWrapper(typeof (FlightIntegrator));
@@ -18,7 +23,7 @@ namespace ModularFI
             string msg = "[MFIManager] Current active VesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
-                msg += "  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active +
+                msg += "[MFIManager]  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active +
                        " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
@@ -33,7 +38,16 @@ namespace ModularFI
 
         private void AddModularPrecalc(Vessel vessel)
         {
-            vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
+            if (!vessel.gameObject.GetComponent<ModularVesselPrecalculate>())
+            {
+                print("[MFIManager] Adding ModularVesselPrecalculate");
+                vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
+            }
+            print("[MFIManager] listing vessel " + vessel.vesselName + " Components");
+            foreach (Component component in vessel.gameObject.GetComponents<Component>())
+            {
+                print("[MFIManager] " + component.GetType().Name);
+            }
         }
     }
 }

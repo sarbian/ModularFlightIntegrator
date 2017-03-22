@@ -6,16 +6,16 @@ namespace ModularFI
     {
         public override void Awake()
         {
-            TimingManager.UpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
-            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
+            TimingManager.UpdateAdd(TimingManager.TimingStage.Precalc, TimedUpdate);
+            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Precalc, TimedFixedUpdate);
 
             base.Awake();
         }
 
         public override void OnDestroy()
         {
-            TimingManager.UpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
-            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
+            TimingManager.UpdateRemove(TimingManager.TimingStage.Precalc, TimedUpdate);
+            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.Precalc, TimedFixedUpdate);
             base.OnDestroy();
         }
 
@@ -26,7 +26,7 @@ namespace ModularFI
 
         public void TimedFixedUpdate()
         {
-            if (gameObject.activeInHierarchy)
+            if (gameObject.activeInHierarchy && this.enabled)
                 base.FixedUpdate();
         }
 
@@ -42,10 +42,9 @@ namespace ModularFI
         /// </summary>
         public void TimedUpdate()
         {
-            if (gameObject.activeInHierarchy)
+            if (gameObject.activeInHierarchy && this.enabled)
                 base.Update();
         }
-
 
         private static Action runFirstOverride;
 
