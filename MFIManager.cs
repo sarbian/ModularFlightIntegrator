@@ -40,13 +40,8 @@ namespace ModularFI
         {
             if (!vessel.gameObject.GetComponent<ModularVesselPrecalculate>())
             {
-                print("[MFIManager] Adding ModularVesselPrecalculate");
+                //print("[MFIManager] Adding ModularVesselPrecalculate");
                 vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
-            }
-            print("[MFIManager] listing vessel " + vessel.vesselName + " Components");
-            foreach (Component component in vessel.gameObject.GetComponents<Component>())
-            {
-                print("[MFIManager] " + component.GetType().Name);
             }
         }
     }
