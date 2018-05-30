@@ -252,6 +252,11 @@ namespace ModularFI
             base.CalculateGravity();
         }
 
+        public Vessel GetVessel()
+        {
+            return vessel;
+        }
+
         ///// <summary>
         ///// This will update pos/rot if landed/splashed and on rails
         ///// </summary>
