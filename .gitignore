@@ -231,6 +231,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # Monodevelop et al
-*.csproj
 *.sln
 *.userprefs

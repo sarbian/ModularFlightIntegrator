@@ -643,15 +643,15 @@ namespace ModularFI
             return false;
         }
 
-        protected override double CalculateBackgroundRadiationTemperature(double d)
+        protected override double CalculateBackgroundRadiationTemperature(double ambientTemp)
         {
             if (calculateBackgroundRadiationTemperatureOverride == null)
             {
-                return base.CalculateBackgroundRadiationTemperature(d);
+                return base.CalculateBackgroundRadiationTemperature(ambientTemp);
             }
             else
             {
-                return calculateBackgroundRadiationTemperatureOverride(this, d);
+                return calculateBackgroundRadiationTemperatureOverride(this, ambientTemp);
             }
         }
         // TODO : CalculateConstantsVacuum
