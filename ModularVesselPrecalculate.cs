@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ModularFI
 {
-    class ModularVesselPrecalculate : VesselPrecalculate
+    public class ModularVesselPrecalculate : VesselPrecalculate
     {
         private float lastMainPhysics = 0;
 
@@ -245,6 +245,16 @@ namespace ModularFI
                 calculateGravityOverride();
             else
                 base.CalculateGravity();
+        }
+
+        public void BaseCalculateGravity()
+        {
+            base.CalculateGravity();
+        }
+
+        public Vessel GetVessel()
+        {
+            return vessel;
         }
 
         ///// <summary>
