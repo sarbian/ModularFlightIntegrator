@@ -643,15 +643,15 @@ namespace ModularFI
             return false;
         }
 
-        protected override double CalculateBackgroundRadiationTemperature(double ambientTemp)
+        protected override double CalculateBackgroundRadiationTemperature(double d)
         {
             if (calculateBackgroundRadiationTemperatureOverride == null)
             {
-                return base.CalculateBackgroundRadiationTemperature(ambientTemp);
+                return base.CalculateBackgroundRadiationTemperature(d);
             }
             else
             {
-                return calculateBackgroundRadiationTemperatureOverride(this, ambientTemp);
+                return calculateBackgroundRadiationTemperatureOverride(this, d);
             }
         }
         // TODO : CalculateConstantsVacuum
@@ -1127,40 +1127,7 @@ namespace ModularFI
             base.UpdateRadiation(ptd);
         }
 
-        private static voidDelegate updateMassStatsOverride;
-
-        public static bool RegisterUpdateMassStatsOverride(voidDelegate dlg)
-        {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
-
-            if (updateMassStatsOverride == null)
-            {
-                updateMassStatsOverride = dlg;
-                return true;
-            }
-            print("UpdateMassStats already has an override");
-            return false;
-        }
-
-        protected override void UpdateMassStats()
-        {
-            if (updateMassStatsOverride == null)
-            {
-                base.UpdateMassStats();
-            }
-            else
-            {
-                updateMassStatsOverride(this);
-            }
-        }
-
-        public void BaseFIUpdateMassStats()
-        {
-            base.UpdateMassStats();
-        }
+        // 
 
         private static doubleThermalDataDelegate updateGetSunAreaOverride;
 
@@ -1372,11 +1339,6 @@ namespace ModularFI
         public double BaseFICalculateAreaExposed(Part part)
         {
             return base.CalculateAreaExposed(part);
-        }
-
-        public double BaseFIGetPhysicslessChildMass(Part part)
-        {
-            return base.GetPhysicslessChildMass(part);
         }
 
         static void print(string msg)
