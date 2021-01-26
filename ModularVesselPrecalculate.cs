@@ -3,52 +3,11 @@ using UnityEngine;
 
 namespace ModularFI
 {
+    [DefaultExecutionOrder(8)]
     class ModularVesselPrecalculate : VesselPrecalculate
     {
         private float lastMainPhysics = 0;
-
-        public override void Awake()
-        {
-            TimingManager.UpdateAdd(TimingManager.TimingStage.Precalc, TimedUpdate);
-            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Precalc, TimedFixedUpdate);
-
-            base.Awake();
-        }
-
-        public override void OnDestroy()
-        {
-            TimingManager.UpdateRemove(TimingManager.TimingStage.Precalc, TimedUpdate);
-            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.Precalc, TimedFixedUpdate);
-            base.OnDestroy();
-        }
-
-        public new void FixedUpdate()
-        {
-            // Empty on puprose. See ModularFlightIntegrator FixedUpdate comment
-        }
-
-        public void TimedFixedUpdate()
-        {
-            if (gameObject.activeInHierarchy && this.enabled)
-                base.FixedUpdate();
-        }
-
-        public override void Update()
-        {
-            // Empty on puprose. See ModularFlightIntegrator FixedUpdate comment
-        }
-
-        /// <summary>
-        /// Used for loaded/unpacked vessels so display matches physics. Runs most of what FixedUpdate does.
-        /// However, it does so with zero time offset and does not calc gravity (that happens in next fixed frame).
-        /// Finally, it signals to next fixed frame it doesn't have to rerun this stuff
-        /// </summary>
-        public void TimedUpdate()
-        {
-            if (gameObject.activeInHierarchy && this.enabled)
-                base.Update();
-        }
-
+        
         private static Action runFirstOverride;
 
         public static bool RegisterMainPhysicsOverride(Action act)

@@ -26,6 +26,7 @@ using UnityEngine;
 
 namespace ModularFI
 {
+    [DefaultExecutionOrder(8)]
     public class ModularFlightIntegrator : FlightIntegrator
     {
 
@@ -148,16 +149,9 @@ namespace ModularFI
                 msg += "  " + vm.GetType().Name + "\n";
             }
             // Register our replacement FixedUpdate to run at the same timing as the stock FlightIntegrator
-            TimingManager.UpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
-            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
+            //TimingManager.UpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
+            //TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
             print(msg);
-        }
-
-        protected override void OnDestroy()
-        {
-            TimingManager.UpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
-            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
-            base.OnDestroy();
         }
 
         //
@@ -203,14 +197,6 @@ namespace ModularFI
         // replace our FixedUpdate with something that does nothing since we will call TimedFixedUpdate
         protected override void FixedUpdate()
         {
-            // Empty on purpose, see comment
-        }
-
-        private void TimedFixedUpdate()
-        {
-            if (!gameObject.activeInHierarchy)
-                return;
-
             if (fixedUpdateOverride == null)
             {
                 base.FixedUpdate();
@@ -219,21 +205,8 @@ namespace ModularFI
             {
                 fixedUpdateOverride(this);
             }
-        }   
-
-        public override void Update()
-        {
-            // Empty on purpose, see comment of FixedUpdate
         }
-
-        private void TimedUpdate()
-        {
-            if (!gameObject.activeInHierarchy)
-                return;
-
-            base.Update();
-        }
-
+        
         private static doubleDelegate calculateShockTemperatureOverride;
 
         public static bool RegisterCalculateShockTemperature(doubleDelegate dlg)
