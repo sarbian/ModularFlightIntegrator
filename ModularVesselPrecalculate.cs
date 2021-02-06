@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ModularFI
 {
-    [DefaultExecutionOrder(8)]
+    [DefaultExecutionOrder(-102)]
     class ModularVesselPrecalculate : VesselPrecalculate
     {
         private float lastMainPhysics = 0;
