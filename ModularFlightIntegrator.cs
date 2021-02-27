@@ -26,7 +26,8 @@ using UnityEngine;
 
 namespace ModularFI
 {
-    [DefaultExecutionOrder(8)]
+    // 9 is the Timing of the stock FlightIntegrator but using it leads to race/exec order problems with FAR+Principia.
+    [DefaultExecutionOrder(10)]
     public class ModularFlightIntegrator : FlightIntegrator
     {
 
