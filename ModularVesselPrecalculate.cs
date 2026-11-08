@@ -12,19 +12,12 @@ namespace ModularFI
 
         public static bool RegisterRunFirstOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref runFirstOverride, act, "RunFirst");
+        }
 
-            if (runFirstOverride == null)
-            {
-                runFirstOverride = act;
-                return true;
-            }
-
-            print("RunFirst already has an override");
-            return false;
+        public static bool UnregisterRunFirstOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref runFirstOverride, act, "RunFirst");
         }
 
         [Obsolete("This overload registers the RunFirst override, not MainPhysics. Use RegisterRunFirstOverride.")]
@@ -53,19 +46,12 @@ namespace ModularFI
         
         public static bool RegisterMainPhysicsOverride(Action<bool> act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref mainPhysicsOverride, act, "MainPhysics");
+        }
 
-            if (mainPhysicsOverride == null)
-            {
-                mainPhysicsOverride = act;
-                return true;
-            }
-
-            print("MainPhysics already has an override");
-            return false;
+        public static bool UnregisterMainPhysicsOverride(Action<bool> act)
+        {
+            return HookRegistry.Unregister(ref mainPhysicsOverride, act, "MainPhysics");
         }
         
         /// <summary>
@@ -95,19 +81,12 @@ namespace ModularFI
 
         public static bool RegisterApplyVelocityCorrectionOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref applyVelocityCorrectionOverride, act, "ApplyVelocityCorrection");
+        }
 
-            if (applyVelocityCorrectionOverride == null)
-            {
-                applyVelocityCorrectionOverride = act;
-                return true;
-            }
-
-            print("ApplyVelocityCorrection already has an override");
-            return false;
+        public static bool UnregisterApplyVelocityCorrectionOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref applyVelocityCorrectionOverride, act, "ApplyVelocityCorrection");
         }
 
         /// <summary>
@@ -130,19 +109,12 @@ namespace ModularFI
 
         public static bool RegisterGoOnRailsOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref goOnRailsOverride, act, "GoOnRails");
+        }
 
-            if (goOnRailsOverride == null)
-            {
-                goOnRailsOverride = act;
-                return true;
-            }
-
-            print("GoOnRails already has an override");
-            return false;
+        public static bool UnregisterGoOnRailsOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref goOnRailsOverride, act, "GoOnRails");
         }
 
         /// <summary>
@@ -165,19 +137,12 @@ namespace ModularFI
 
         public static bool RegisterGoOffRailsOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref goOffRailsOverride, act, "GoOffRails");
+        }
 
-            if (goOffRailsOverride == null)
-            {
-                goOffRailsOverride = act;
-                return true;
-            }
-
-            print("GoOffRails already has an override");
-            return false;
+        public static bool UnregisterGoOffRailsOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref goOffRailsOverride, act, "GoOffRails");
         }
 
         /// <summary>
@@ -210,19 +175,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateGravityOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateGravityOverride, act, "CalculateGravity");
+        }
 
-            if (calculateGravityOverride == null)
-            {
-                calculateGravityOverride = act;
-                return true;
-            }
-
-            print("CalculateGravity already has an override");
-            return false;
+        public static bool UnregisterCalculateGravityOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref calculateGravityOverride, act, "CalculateGravity");
         }
 
         /// <summary>
@@ -254,19 +212,12 @@ namespace ModularFI
 
         public static bool RegisterCalculatePhysicsStatsOverride(Action act)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculatePhysicsStatsOverride, act, "CalculatePhysicsStats");
+        }
 
-            if (calculatePhysicsStatsOverride == null)
-            {
-                calculatePhysicsStatsOverride = act;
-                return true;
-            }
-
-            print("CalculatePhysicsStats already has an override");
-            return false;
+        public static bool UnregisterCalculatePhysicsStatsOverride(Action act)
+        {
+            return HookRegistry.Unregister(ref calculatePhysicsStatsOverride, act, "CalculatePhysicsStats");
         }
 
         /// <summary>
