@@ -4,13 +4,13 @@ using UnityEngine;
 namespace ModularFI
 {
     [DefaultExecutionOrder(-102)]
-    class ModularVesselPrecalculate : VesselPrecalculate
+    public class ModularVesselPrecalculate : VesselPrecalculate
     {
         private float lastMainPhysics = 0;
-        
+
         private static Action runFirstOverride;
 
-        public static bool RegisterMainPhysicsOverride(Action act)
+        public static bool RegisterRunFirstOverride(Action act)
         {
             if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
@@ -27,6 +27,12 @@ namespace ModularFI
             return false;
         }
 
+        [Obsolete("This overload registers the RunFirst override, not MainPhysics. Use RegisterRunFirstOverride.")]
+        public static bool RegisterMainPhysicsOverride(Action act)
+        {
+            return RegisterRunFirstOverride(act);
+        }
+
         /// <summary>
         /// Run when a vessel initializes in flight
         /// </summary>
@@ -36,6 +42,11 @@ namespace ModularFI
                 runFirstOverride();
             else
                 base.RunFirst();
+        }
+
+        public void BaseRunFirst()
+        {
+            base.RunFirst();
         }
 
         private static Action<bool> mainPhysicsOverride;
@@ -75,6 +86,11 @@ namespace ModularFI
             lastMainPhysics = Time.fixedTime;
         }
 
+        public void BaseMainPhysics(bool doKillChecks)
+        {
+            base.MainPhysics(doKillChecks);
+        }
+
         private static Action applyVelocityCorrectionOverride;
 
         public static bool RegisterApplyVelocityCorrectionOverride(Action act)
@@ -103,6 +119,11 @@ namespace ModularFI
                 applyVelocityCorrectionOverride();
             else
                 base.ApplyVelocityCorrection();
+        }
+
+        public void BaseApplyVelocityCorrection()
+        {
+            base.ApplyVelocityCorrection();
         }
 
         private static Action goOnRailsOverride;
@@ -135,6 +156,11 @@ namespace ModularFI
                 base.GoOnRails();
         }
 
+        public void BaseGoOnRails()
+        {
+            base.GoOnRails();
+        }
+
         private static Action goOffRailsOverride;
 
         public static bool RegisterGoOffRailsOverride(Action act)
@@ -163,6 +189,11 @@ namespace ModularFI
                 goOffRailsOverride();
             else
                 base.GoOffRails();
+        }
+
+        public void BaseGoOffRails()
+        {
+            base.GoOffRails();
         }
 
         //protected override void StartEasing()
@@ -206,6 +237,11 @@ namespace ModularFI
                 base.CalculateGravity();
         }
 
+        public void BaseCalculateGravity()
+        {
+            base.CalculateGravity();
+        }
+
         ///// <summary>
         ///// This will update pos/rot if landed/splashed and on rails
         ///// </summary>
@@ -244,6 +280,11 @@ namespace ModularFI
                 calculatePhysicsStatsOverride();
             else
                 base.CalculatePhysicsStats();
+        }
+
+        public void BaseCalculatePhysicsStats()
+        {
+            base.CalculatePhysicsStats();
         }
 
         //public override bool isEasingGravity { get; set; }
