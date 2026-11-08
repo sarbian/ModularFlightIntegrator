@@ -141,18 +141,7 @@ namespace ModularFI
 
         protected override void OnStart()
         {
-            print("MFI Start");
             base.OnStart();
-
-            string msg = "Start. VesselModule on vessel : \n";
-            foreach (VesselModule vm in vessel.gameObject.GetComponents<VesselModule>())
-            {
-                msg += "  " + vm.GetType().Name + "\n";
-            }
-            // Register our replacement FixedUpdate to run at the same timing as the stock FlightIntegrator
-            //TimingManager.UpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedUpdate);
-            //TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, TimedFixedUpdate);
-            print(msg);
         }
 
         //
