@@ -607,6 +607,11 @@ namespace ModularFI
             }
         }
 
+        public double BaseFICalculateDensityThermalLerp()
+        {
+            return base.CalculateDensityThermalLerp();
+        }
+
         // TODO : CalculateBackgroundRadiationTemperature
         private static doubleDoubleDelegate calculateBackgroundRadiationTemperatureOverride;
 
@@ -631,6 +636,12 @@ namespace ModularFI
                 return calculateBackgroundRadiationTemperatureOverride(this, ambientTemp);
             }
         }
+
+        public double BaseFICalculateBackgroundRadiationTemperature(double ambientTemp)
+        {
+            return base.CalculateBackgroundRadiationTemperature(ambientTemp);
+        }
+
         // TODO : CalculateConstantsVacuum
         private static voidDelegate calculateConstantsVacuumOverride;
 
@@ -655,6 +666,12 @@ namespace ModularFI
                 calculateConstantsVacuumOverride(this);
             }
         }
+
+        public void BaseFICalculateConstantsVacuum()
+        {
+            base.CalculateConstantsVacuum();
+        }
+
         // TODO : CalculateConstantsAtmosphere
         private static voidDelegate calculateConstantsAtmosphereOverride;
 
@@ -686,6 +703,11 @@ namespace ModularFI
             }
         }
 
+        public void BaseFICalculateConstantsAtmosphere()
+        {
+            base.CalculateConstantsAtmosphere();
+        }
+
         // TODO : CalculateConvectiveCoefficient
         private static doubleDelegate calculateConvectiveCoefficientOverride;
 
@@ -710,6 +732,12 @@ namespace ModularFI
                 return calculateConvectiveCoefficientOverride(this);
             }
         }
+
+        public double BaseFICalculateConvectiveCoefficient()
+        {
+            return base.CalculateConvectiveCoefficient();
+        }
+
         
         // TODO : CalculateConvectiveCoefficientNewtonian
         private static doubleDelegate calculateConvectiveCoefficientNewtonianOverride;
@@ -735,6 +763,12 @@ namespace ModularFI
                 return calculateConvectiveCoefficientNewtonianOverride(this);
             }
         }
+
+        public double BaseFICalculateConvectiveCoefficientNewtonian()
+        {
+            return base.CalculateConvectiveCoefficientNewtonian();
+        }
+
         // TODO : CalculateConvectiveCoefficientMach
         private static doubleDelegate calculateConvectiveCoefficientMachOverride;
 
@@ -758,6 +792,11 @@ namespace ModularFI
             {
                 return calculateConvectiveCoefficientMachOverride(this);
             }
+        }
+
+        public double BaseFICalculateConvectiveCoefficientMach()
+        {
+            return base.CalculateConvectiveCoefficientMach();
         }
 
         private static voidPartDelegate updateAerodynamicsOverride;
