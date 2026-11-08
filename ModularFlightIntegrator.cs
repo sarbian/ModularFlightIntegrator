@@ -40,10 +40,15 @@ namespace ModularFI
         public delegate double doublePartDelegate(ModularFlightIntegrator fi, Part part);
         public delegate void voidThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
         public delegate double doubleThermalDataDelegate(ModularFlightIntegrator fi, PartThermalData ptd);
+        /// <summary>
+        /// Override of IntegratePhysicalObjects, which is void: the return value is ignored.
+        /// The delegate keeps its shape so the mods compiled against it keep working.
+        /// </summary>
         public delegate double IntegratePhysicalObjectsDelegate(ModularFlightIntegrator fi, List<physicalObject> pObjs, double atmDensity);
-        
-        // Properties to access the FlightIntegrator protected field
-        // Some should be readonly I guess
+
+        // Properties giving an override access to the FlightIntegrator fields that are
+        // protected in stock. The ones with a setter are written by the stock FixedUpdate
+        // every step, so a value set from a hook lasts until the next step.
 
         public Transform IntegratorTransform
         {
@@ -87,6 +92,10 @@ namespace ModularFI
             set { sunLayerMask = value; }
         }
 
+        /// <summary>
+        /// Same as the stock partThermalDataList field, which is public since KSP 1.1;
+        /// kept for the mods that use this property.
+        /// </summary>
         public List<PartThermalData> PartThermalDataList
         {
             get { return partThermalDataList; }
@@ -104,12 +113,19 @@ namespace ModularFI
             set { partThermalDataCount = value; }
         }
         
+        /// <summary>
+        /// The physics step, set by the stock FixedUpdate. Read only: the integrator
+        /// derives FDeltaTimeRecip from it.
+        /// </summary>
         public double FDeltaTime
         {
             get { return fDeltaTime; }
-            // set { fDeltaTime = value; } // I feel a set here is a recipe for disaster
         }
 
+        /// <summary>
+        /// 1 / FDeltaTime. The setter exists for compatibility; a value set here is
+        /// overwritten by the stock FixedUpdate on the next step.
+        /// </summary>
         public double FDeltaTimeRecip
         {
             get { return fDeltaTimeRecip; }
@@ -204,14 +220,20 @@ namespace ModularFI
         
         private static doubleDelegate calculateShockTemperatureOverride;
 
-        public static bool RegisterCalculateShockTemperature(doubleDelegate dlg)
+        public static bool RegisterCalculateShockTemperatureOverride(doubleDelegate dlg)
         {
             return HookRegistry.Register(ref calculateShockTemperatureOverride, dlg, "CalculateShockTemperature");
         }
 
-        public static bool UnregisterCalculateShockTemperature(doubleDelegate dlg)
+        public static bool UnregisterCalculateShockTemperatureOverride(doubleDelegate dlg)
         {
             return HookRegistry.Unregister(ref calculateShockTemperatureOverride, dlg, "CalculateShockTemperature");
+        }
+
+        [Obsolete("Use RegisterCalculateShockTemperatureOverride.")]
+        public static bool RegisterCalculateShockTemperature(doubleDelegate dlg)
+        {
+            return RegisterCalculateShockTemperatureOverride(dlg);
         }
 
         public override double CalculateShockTemperature()
@@ -343,14 +365,20 @@ namespace ModularFI
 
         private static doubleDelegate calculateAnalyticTemperatureOverride;
 
-        public static bool RegisterCalculateAnalyticTemperature(doubleDelegate dlg)
+        public static bool RegisterCalculateAnalyticTemperatureOverride(doubleDelegate dlg)
         {
             return HookRegistry.Register(ref calculateAnalyticTemperatureOverride, dlg, "CalculateAnalyticTemperature");
         }
 
-        public static bool UnregisterCalculateAnalyticTemperature(doubleDelegate dlg)
+        public static bool UnregisterCalculateAnalyticTemperatureOverride(doubleDelegate dlg)
         {
             return HookRegistry.Unregister(ref calculateAnalyticTemperatureOverride, dlg, "CalculateAnalyticTemperature");
+        }
+
+        [Obsolete("Use RegisterCalculateAnalyticTemperatureOverride.")]
+        public static bool RegisterCalculateAnalyticTemperature(doubleDelegate dlg)
+        {
+            return RegisterCalculateAnalyticTemperatureOverride(dlg);
         }
 
         public override double CalculateAnalyticTemperature()
@@ -630,9 +658,15 @@ namespace ModularFI
         // TODO : CalculateConstantsAtmosphere
         private static voidDelegate calculateConstantsAtmosphereOverride;
 
-        public static bool RegistercalculateConstantsAtmosphereOverride(voidDelegate dlg)
+        public static bool RegisterCalculateConstantsAtmosphereOverride(voidDelegate dlg)
         {
             return HookRegistry.Register(ref calculateConstantsAtmosphereOverride, dlg, "CalculateConstantsAtmosphere");
+        }
+
+        [Obsolete("Use RegisterCalculateConstantsAtmosphereOverride (capital C).")]
+        public static bool RegistercalculateConstantsAtmosphereOverride(voidDelegate dlg)
+        {
+            return RegisterCalculateConstantsAtmosphereOverride(dlg);
         }
 
         public static bool UnregisterCalculateConstantsAtmosphereOverride(voidDelegate dlg)
@@ -826,14 +860,20 @@ namespace ModularFI
         
         private static voidDelegate updateCompoundPartsOverride;
 
-        public static bool RegisterUpdateCompoundParts(voidDelegate dlg)
+        public static bool RegisterUpdateCompoundPartsOverride(voidDelegate dlg)
         {
             return HookRegistry.Register(ref updateCompoundPartsOverride, dlg, "UpdateCompoundParts");
         }
 
-        public static bool UnregisterUpdateCompoundParts(voidDelegate dlg)
+        public static bool UnregisterUpdateCompoundPartsOverride(voidDelegate dlg)
         {
             return HookRegistry.Unregister(ref updateCompoundPartsOverride, dlg, "UpdateCompoundParts");
+        }
+
+        [Obsolete("Use RegisterUpdateCompoundPartsOverride.")]
+        public static bool RegisterUpdateCompoundParts(voidDelegate dlg)
+        {
+            return RegisterUpdateCompoundPartsOverride(dlg);
         }
 
         public override void UpdateCompoundParts()
@@ -855,14 +895,20 @@ namespace ModularFI
         
         private static voidThermalDataDelegate setSkinPropertiesOverride;
 
-        public static bool RegisterSetSkinProperties(voidThermalDataDelegate dlg)
+        public static bool RegisterSetSkinPropertiesOverride(voidThermalDataDelegate dlg)
         {
             return HookRegistry.Register(ref setSkinPropertiesOverride, dlg, "SetSkinProperties");
         }
 
-        public static bool UnregisterSetSkinProperties(voidThermalDataDelegate dlg)
+        public static bool UnregisterSetSkinPropertiesOverride(voidThermalDataDelegate dlg)
         {
             return HookRegistry.Unregister(ref setSkinPropertiesOverride, dlg, "SetSkinProperties");
+        }
+
+        [Obsolete("Use RegisterSetSkinPropertiesOverride.")]
+        public static bool RegisterSetSkinProperties(voidThermalDataDelegate dlg)
+        {
+            return RegisterSetSkinPropertiesOverride(dlg);
         }
 
         public override void SetSkinProperties(PartThermalData ptd)
@@ -877,6 +923,12 @@ namespace ModularFI
             }
         }
 
+        public void BaseFISetSkinProperties(PartThermalData ptd)
+        {
+            base.SetSkinProperties(ptd);
+        }
+
+        [Obsolete("Use BaseFISetSkinProperties.")]
         public void BaseFIetSkinPropertie(PartThermalData ptd)
         {
             base.SetSkinProperties(ptd);
@@ -1058,11 +1110,16 @@ namespace ModularFI
             }
         }
 
+        public double BaseFIGetBodyArea(PartThermalData ptd)
+        {
+            return base.GetBodyArea(ptd);
+        }
+
+        [Obsolete("Use BaseFIGetBodyArea.")]
         public double BaseFIBodyArea(PartThermalData ptd)
         {
             return base.GetBodyArea(ptd);
         }
-        //
 
 
 
