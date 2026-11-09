@@ -14,7 +14,7 @@ API level 1.3 (`KSPAssembly("ModularFlightIntegrator", 1, 3)`); `AssemblyVersion
 - New hooks: `ThermalIntegrationPass`, `PrecalcConduction`, `PrecalcConvection`, `PrecalcRadiation`, `UnifySkinTemp`, `SetSkinThermalMass`, `SmoothVelocity`, `ThermoPrecalculate`, the four `CalculateDragValue_*` models, and on the precalc `SetLandedPosRot`, `StartEasing`, `StopEasing` (#23).
 - XML docs say when the Pre/Post handlers run (#24). No more VesselModule list in the log for every vessel start (#28).
 - README, root LICENSE (#29).
-- Project: SDK-style .NET Framework 4.8 project, references through `KSPDIR`, portable pdb, nothing copied without `KSPDIR`; UTF-8 BOMs removed. GitHub Actions: `build.yml` builds every push and PR (zip as artifact and PR comment), `create-release` builds, bumps, tags and publishes a release with the zip and the KSP-AVC version file. The version file points at GitHub releases and declares KSP 1.11.0 to 1.13.99.
+- Project: SDK-style .NET Framework 4.8 project, references through `KSPDIR`, portable pdb, nothing copied without `KSPDIR`; UTF-8 BOMs removed. GitHub Actions: `build.yml` builds every push and PR (zip as artifact and PR comment), `create-release` builds, bumps, tags and publishes a release with the zip and the KSP-AVC version file. The version file points at GitHub releases and declares KSP 1.12.0 to 1.13.99.
 
 ## 1.2.10.0 (2021-08-09)
 
