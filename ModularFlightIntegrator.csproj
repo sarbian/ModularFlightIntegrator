@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HookRegistry.cs" />
     <Compile Include="MFIManager.cs" />
     <Compile Include="ModularFlightIntegrator.cs" />
     <Compile Include="ModularVesselPrecalculate.cs" />

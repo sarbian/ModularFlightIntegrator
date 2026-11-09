@@ -177,19 +177,12 @@ namespace ModularFI
 
         public static bool RegisterFixedUpdateOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref fixedUpdateOverride, dlg, "FixedUpdate");
+        }
 
-            if (fixedUpdateOverride == null)
-            {
-                fixedUpdateOverride = dlg;
-                return true;
-            }
-
-            print("FixedUpdate already has an override");
-            return false;
+        public static bool UnregisterFixedUpdateOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref fixedUpdateOverride, dlg, "FixedUpdate");
         }
 
         // We want the FixedUpdate code to run exactly when we want (after vessel and partmodule).
@@ -212,19 +205,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateShockTemperature(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateShockTemperatureOverride, dlg, "CalculateShockTemperature");
+        }
 
-            if (calculateShockTemperatureOverride == null)
-            {
-                calculateShockTemperatureOverride = dlg;
-                return true;
-            }
-
-            print("CalculateShockTemperature already has an override");
-            return false;
+        public static bool UnregisterCalculateShockTemperature(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateShockTemperatureOverride, dlg, "CalculateShockTemperature");
         }
 
         public override double CalculateShockTemperature()
@@ -250,30 +236,32 @@ namespace ModularFI
 
         public static bool RegisterUpdateThermodynamicsOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateThermodynamicsOverride, dlg, "UpdateThermodynamics");
+        }
 
-
-            if (updateThermodynamicsOverride == null)
-            {
-                updateThermodynamicsOverride = dlg;
-                return true;
-            }
-
-            print("UpdateThermodynamics already has an override");
-            return false;
+        public static bool UnregisterUpdateThermodynamicsOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateThermodynamicsOverride, dlg, "UpdateThermodynamics");
         }
 
         public static void RegisterUpdateThermodynamicsPre(voidDelegate dlg)
         {
-            updateThermodynamicsPre += dlg;
+            HookRegistry.Add(ref updateThermodynamicsPre, dlg);
+        }
+
+        public static void UnregisterUpdateThermodynamicsPre(voidDelegate dlg)
+        {
+            HookRegistry.Remove(ref updateThermodynamicsPre, dlg);
         }
 
         public static void RegisterUpdateThermodynamicsPost(voidDelegate dlg)
         {
-            updateThermodynamicsPost += dlg;
+            HookRegistry.Add(ref updateThermodynamicsPost, dlg);
+        }
+
+        public static void UnregisterUpdateThermodynamicsPost(voidDelegate dlg)
+        {
+            HookRegistry.Remove(ref updateThermodynamicsPost, dlg);
         }
 
         protected override void UpdateThermodynamics()
@@ -318,19 +306,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateAnalyticTemperature(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateAnalyticTemperatureOverride, dlg, "CalculateAnalyticTemperature");
+        }
 
-            if (calculateAnalyticTemperatureOverride == null)
-            {
-                calculateAnalyticTemperatureOverride = dlg;
-                return true;
-            }
-
-            print("CalculateAnalyticTemperature already has an override");
-            return false;
+        public static bool UnregisterCalculateAnalyticTemperature(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateAnalyticTemperatureOverride, dlg, "CalculateAnalyticTemperature");
         }
 
         public override double CalculateAnalyticTemperature()
@@ -354,20 +335,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateOcclusionOverride(voidBoolDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateOcclusionOverride, dlg, "UpdateOcclusion");
+        }
 
-
-            if (updateOcclusionOverride == null)
-            {
-                updateOcclusionOverride = dlg;
-                return true;
-            }
-
-            print("UpdateOcclusion already has an override");
-            return false;
+        public static bool UnregisterUpdateOcclusionOverride(voidBoolDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateOcclusionOverride, dlg, "UpdateOcclusion");
         }
 
         protected override void UpdateOcclusion(bool all)
@@ -391,19 +364,12 @@ namespace ModularFI
 
         public static bool RegisterIntegrateOverride(voidPartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref integrateOverride, dlg, "Integrate");
+        }
 
-            if (integrateOverride == null)
-            {
-                integrateOverride = dlg;
-                return true;
-            }
-            
-            print("Integrate already has an override");
-            return false;
+        public static bool UnregisterIntegrateOverride(voidPartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref integrateOverride, dlg, "Integrate");
         }
 
         protected override void Integrate(Part part)
@@ -433,20 +399,12 @@ namespace ModularFI
 
         public static bool RegisterIntegratePhysicalObjectsOverride(IntegratePhysicalObjectsDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref integratePhysicalObjectsOverride, dlg, "IntegratePhysicalObjects");
+        }
 
-
-            if (integratePhysicalObjectsOverride == null)
-            {
-                integratePhysicalObjectsOverride = dlg;
-                return true;
-            }
-
-            print("IntegratePhysicalObjects already has an override");
-            return false;
+        public static bool UnregisterIntegratePhysicalObjectsOverride(IntegratePhysicalObjectsDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref integratePhysicalObjectsOverride, dlg, "IntegratePhysicalObjects");
         }
 
         protected override void IntegratePhysicalObjects(List<physicalObject> pObjs, double atmDensity)
@@ -470,20 +428,12 @@ namespace ModularFI
 
         public static bool RegisterCalculatePressureOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculatePressureOverride, dlg, "CalculatePressure");
+        }
 
-
-            if (calculatePressureOverride == null)
-            {
-                calculatePressureOverride = dlg;
-                return true;
-            }
-
-            print("CalculatePressure already has an override");
-            return false;
+        public static bool UnregisterCalculatePressureOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculatePressureOverride, dlg, "CalculatePressure");
         }
 
         protected override void CalculatePressure()
@@ -509,30 +459,32 @@ namespace ModularFI
 
         public static bool RegisterCalculateSunBodyFluxOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateSunBodyFluxOverride, dlg, "CalculateSunBodyFlux");
+        }
 
-
-            if (calculateSunBodyFluxOverride == null)
-            {
-                calculateSunBodyFluxOverride = dlg;
-                return true;
-            }
-
-            print("CalculateSunBodyFlux already has an override");
-            return false;
+        public static bool UnregisterCalculateSunBodyFluxOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateSunBodyFluxOverride, dlg, "CalculateSunBodyFlux");
         }
 
         public static void RegisterCalculateSunBodyFluxPre(voidDelegate dlg)
         {
-            calculateSunBodyFluxPre += dlg;
+            HookRegistry.Add(ref calculateSunBodyFluxPre, dlg);
+        }
+
+        public static void UnregisterCalculateSunBodyFluxPre(voidDelegate dlg)
+        {
+            HookRegistry.Remove(ref calculateSunBodyFluxPre, dlg);
         }
 
         public static void RegisterCalculateSunBodyFluxPost(voidDelegate dlg)
         {
-            calculateSunBodyFluxPost += dlg;
+            HookRegistry.Add(ref calculateSunBodyFluxPost, dlg);
+        }
+
+        public static void UnregisterCalculateSunBodyFluxPost(voidDelegate dlg)
+        {
+            HookRegistry.Remove(ref calculateSunBodyFluxPost, dlg);
         }
 
         protected override void CalculateSunBodyFlux()
@@ -568,20 +520,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateDensityThermalLerpOverride(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateDensityThermalLerpOverride, dlg, "CalculateDensityThermalLerp");
+        }
 
-
-            if (calculateDensityThermalLerpOverride == null)
-            {
-                calculateDensityThermalLerpOverride = dlg;
-                return true;
-            }
-
-            print("CalculateDensityThermalLerp already has an override");
-            return false; 
+        public static bool UnregisterCalculateDensityThermalLerpOverride(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDensityThermalLerpOverride, dlg, "CalculateDensityThermalLerp");
         }
 
         public override double CalculateDensityThermalLerp()
@@ -601,20 +545,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateBackgroundRadiationTemperatureOverride(doubleDoubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateBackgroundRadiationTemperatureOverride, dlg, "CalculateBackgroundRadiationTemperature");
+        }
 
-
-            if (calculateBackgroundRadiationTemperatureOverride == null)
-            {
-                calculateBackgroundRadiationTemperatureOverride = dlg;
-                return true;
-            }
-
-            print("CalculateBackgroundRadiationTemperature already has an override");
-            return false;
+        public static bool UnregisterCalculateBackgroundRadiationTemperatureOverride(doubleDoubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateBackgroundRadiationTemperatureOverride, dlg, "CalculateBackgroundRadiationTemperature");
         }
 
         protected override double CalculateBackgroundRadiationTemperature(double ambientTemp)
@@ -633,20 +569,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateConstantsVacuumOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateConstantsVacuumOverride, dlg, "CalculateConstantsVacuum");
+        }
 
-
-            if (calculateConstantsVacuumOverride == null)
-            {
-                calculateConstantsVacuumOverride = dlg;
-                return true;
-            }
-
-            print("CalculateConstantsVacuum already has an override");
-            return false;
+        public static bool UnregisterCalculateConstantsVacuumOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateConstantsVacuumOverride, dlg, "CalculateConstantsVacuum");
         }
 
         protected override void CalculateConstantsVacuum()
@@ -665,20 +593,12 @@ namespace ModularFI
 
         public static bool RegistercalculateConstantsAtmosphereOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateConstantsAtmosphereOverride, dlg, "CalculateConstantsAtmosphere");
+        }
 
-
-            if (calculateConstantsAtmosphereOverride == null)
-            {
-                calculateConstantsAtmosphereOverride = dlg;
-                return true;
-            }
-
-            print("CalculateConstantsAtmosphere already has an override");
-            return false;
+        public static bool UnregisterCalculateConstantsAtmosphereOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateConstantsAtmosphereOverride, dlg, "CalculateConstantsAtmosphere");
         }
 
         protected override void CalculateConstantsAtmosphere()
@@ -698,20 +618,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateConvectiveCoefficientOverride(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateConvectiveCoefficientOverride, dlg, "CalculateConvectiveCoefficient");
+        }
 
-
-            if (calculateConvectiveCoefficientOverride == null)
-            {
-                calculateConvectiveCoefficientOverride = dlg;
-                return true;
-            }
-
-            print("CalculateConvectiveCoefficient already has an override");
-            return false;
+        public static bool UnregisterCalculateConvectiveCoefficientOverride(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateConvectiveCoefficientOverride, dlg, "CalculateConvectiveCoefficient");
         }
 
         protected override double CalculateConvectiveCoefficient()
@@ -731,20 +643,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateConvectiveCoefficientNewtonianOverride(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateConvectiveCoefficientNewtonianOverride, dlg, "CalculateConvectiveCoefficientNewtonian");
+        }
 
-
-            if (calculateConvectiveCoefficientNewtonianOverride == null)
-            {
-                calculateConvectiveCoefficientNewtonianOverride = dlg;
-                return true;
-            }
-
-            print("CalculateConvectiveCoefficientNewtonian already has an override");
-            return false;
+        public static bool UnregisterCalculateConvectiveCoefficientNewtonianOverride(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateConvectiveCoefficientNewtonianOverride, dlg, "CalculateConvectiveCoefficientNewtonian");
         }
 
         protected override double CalculateConvectiveCoefficientNewtonian()
@@ -763,20 +667,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateConvectiveCoefficientMachOverride(doubleDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateConvectiveCoefficientMachOverride, dlg, "CalculateConvectiveCoefficientMach");
+        }
 
-
-            if (calculateConvectiveCoefficientMachOverride == null)
-            {
-                calculateConvectiveCoefficientMachOverride = dlg;
-                return true;
-            }
-
-            print("CalculateConvectiveCoefficientMach already has an override");
-            return false;
+        public static bool UnregisterCalculateConvectiveCoefficientMachOverride(doubleDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateConvectiveCoefficientMachOverride, dlg, "CalculateConvectiveCoefficientMach");
         }
 
         protected override double CalculateConvectiveCoefficientMach()
@@ -795,20 +691,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateAerodynamicsOverride(voidPartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateAerodynamicsOverride, dlg, "UpdateAerodynamics");
+        }
 
-
-            if (updateAerodynamicsOverride == null)
-            {
-                updateAerodynamicsOverride = dlg;
-                return true;
-            }
-
-            print("UpdateAerodynamics already has an override");
-            return false;
+        public static bool UnregisterUpdateAerodynamicsOverride(voidPartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateAerodynamicsOverride, dlg, "UpdateAerodynamics");
         }
 
         protected override void UpdateAerodynamics(Part part)
@@ -837,20 +725,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateDragValueOverride(doublePartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateDragValueOverride, dlg, "CalculateDragValue");
+        }
 
-
-            if (calculateDragValueOverride == null)
-            {
-                calculateDragValueOverride = dlg;
-                return true;
-            }
-
-            print("CalculateDragValue already has an override");
-            return false;
+        public static bool UnregisterCalculateDragValueOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDragValueOverride, dlg, "CalculateDragValue");
         }
 
         protected override double CalculateDragValue(Part part)
@@ -879,20 +759,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateThermalGraphOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateThermalGraphOverride, dlg, "UpdateThermalGraph");
+        }
 
-
-            if (updateThermalGraphOverride == null)
-            {
-                updateThermalGraphOverride = dlg;
-                return true;
-            }
-
-            print("UpdateThermalGraph already has an override");
-            return false;
+        public static bool UnregisterUpdateThermalGraphOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateThermalGraphOverride, dlg, "UpdateThermalGraph");
         }
 
         protected override void UpdateThermalGraph()
@@ -917,19 +789,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateCompoundParts(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateCompoundPartsOverride, dlg, "UpdateCompoundParts");
+        }
 
-            if (updateCompoundPartsOverride == null)
-            {
-                updateCompoundPartsOverride = dlg;
-                return true;
-            }
-
-            print("UpdateCompoundParts already has an override");
-            return false;
+        public static bool UnregisterUpdateCompoundParts(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateCompoundPartsOverride, dlg, "UpdateCompoundParts");
         }
 
         public override void UpdateCompoundParts()
@@ -953,19 +818,12 @@ namespace ModularFI
 
         public static bool RegisterSetSkinProperties(voidThermalDataDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref setSkinPropertiesOverride, dlg, "SetSkinProperties");
+        }
 
-            if (setSkinPropertiesOverride == null)
-            {
-                setSkinPropertiesOverride = dlg;
-                return true;
-            }
-
-            print("UpdateCompoundParts already has an override");
-            return false;
+        public static bool UnregisterSetSkinProperties(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref setSkinPropertiesOverride, dlg, "SetSkinProperties");
         }
 
         public override void SetSkinProperties(PartThermalData ptd)
@@ -989,20 +847,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateConductionOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateConductionOverride, dlg, "UpdateConduction");
+        }
 
-
-            if (updateConductionOverride == null)
-            {
-                updateConductionOverride = dlg;
-                return true;
-            }
-
-            print("UpdateConduction already has an override");
-            return false;
+        public static bool UnregisterUpdateConductionOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateConductionOverride, dlg, "UpdateConduction");
         }
 
         public override void UpdateConduction()
@@ -1031,20 +881,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateConvectionOverride(voidThermalDataDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateConvectionOverride, dlg, "UpdateConvection");
+        }
 
-
-            if (updateConvectionOverride == null)
-            {
-                updateConvectionOverride = dlg;
-                return true;
-            }
-
-            print("UpdateConvection already has an override");
-            return false;
+        public static bool UnregisterUpdateConvectionOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateConvectionOverride, dlg, "UpdateConvection");
         }
 
         public override void UpdateConvection(PartThermalData ptd)
@@ -1068,20 +910,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateRadiationOverride(voidThermalDataDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateRadiationOverride, dlg, "UpdateRadiation");
+        }
 
-
-            if (updateRadiationOverride == null)
-            {
-                updateRadiationOverride = dlg;
-                return true;
-            }
-
-            print("UpdateConvection already has an override");
-            return false;
+        public static bool UnregisterUpdateRadiationOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateRadiationOverride, dlg, "UpdateRadiation");
         }
 
         public override void UpdateRadiation(PartThermalData ptd)
@@ -1105,18 +939,12 @@ namespace ModularFI
 
         public static bool RegisterUpdateMassStatsOverride(voidDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateMassStatsOverride, dlg, "UpdateMassStats");
+        }
 
-            if (updateMassStatsOverride == null)
-            {
-                updateMassStatsOverride = dlg;
-                return true;
-            }
-            print("UpdateMassStats already has an override");
-            return false;
+        public static bool UnregisterUpdateMassStatsOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateMassStatsOverride, dlg, "UpdateMassStats");
         }
 
         protected override void UpdateMassStats()
@@ -1140,20 +968,12 @@ namespace ModularFI
 
         public static bool RegisterGetSunAreaOverride(doubleThermalDataDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref updateGetSunAreaOverride, dlg, "GetSunArea");
+        }
 
-
-            if (updateGetSunAreaOverride == null)
-            {
-                updateGetSunAreaOverride = dlg;
-                return true;
-            }
-
-            print("GetSunArea already has an override");
-            return false;
+        public static bool UnregisterGetSunAreaOverride(doubleThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref updateGetSunAreaOverride, dlg, "GetSunArea");
         }
 
         public override double GetSunArea(PartThermalData ptd)
@@ -1179,20 +999,12 @@ namespace ModularFI
 
         public static bool RegisterGetBodyAreaOverride(doubleThermalDataDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref getBodyAreaOverride, dlg, "GetBodyArea");
+        }
 
-
-            if (getBodyAreaOverride == null)
-            {
-                getBodyAreaOverride = dlg;
-                return true;
-            }
-
-            print("GetBodyArea already has an override");
-            return false;
+        public static bool UnregisterGetBodyAreaOverride(doubleThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref getBodyAreaOverride, dlg, "GetBodyArea");
         }
 
         public override double GetBodyArea(PartThermalData ptd)
@@ -1241,20 +1053,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateAerodynamicAreaOverride(doublePartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateAerodynamicAreaOverride, dlg, "CalculateAerodynamicArea");
+        }
 
-
-            if (calculateAerodynamicAreaOverride == null)
-            {
-                calculateAerodynamicAreaOverride = dlg;
-                return true;
-            }
-
-            print("CalculateAerodynamicArea already has an override");
-            return false;
+        public static bool UnregisterCalculateAerodynamicAreaOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateAerodynamicAreaOverride, dlg, "CalculateAerodynamicArea");
         }
 
         protected override double CalculateAerodynamicArea(Part part)
@@ -1278,20 +1082,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateAreaRadiativeOverride(doublePartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateAreaRadiativeOverride, dlg, "CalculateAreaRadiative");
+        }
 
-
-            if (calculateAreaRadiativeOverride == null)
-            {
-                calculateAreaRadiativeOverride = dlg;
-                return true;
-            }
-
-            print("CalculateAreaRadiative already has an override");
-            return false;
+        public static bool UnregisterCalculateAreaRadiativeOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateAreaRadiativeOverride, dlg, "CalculateAreaRadiative");
         }
 
         protected override double CalculateAreaRadiative(Part part)
@@ -1315,20 +1111,12 @@ namespace ModularFI
 
         public static bool RegisterCalculateAreaExposedOverride(doublePartDelegate dlg)
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                print("You can only register on the SPACECENTER scene");
-            }
+            return HookRegistry.Register(ref calculateAreaExposedOverride, dlg, "CalculateAreaExposed");
+        }
 
-
-            if (calculateAreaExposedOverride == null)
-            {
-                calculateAreaExposedOverride = dlg;
-                return true;
-            }
-
-            print("CalculateAreaExposed already has an override");
-            return false;
+        public static bool UnregisterCalculateAreaExposedOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateAreaExposedOverride, dlg, "CalculateAreaExposed");
         }
 
         protected override double CalculateAreaExposed(Part part)
