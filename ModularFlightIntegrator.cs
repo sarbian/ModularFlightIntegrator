@@ -889,22 +889,22 @@ namespace ModularFI
             return HookRegistry.Unregister(ref updateConvectionOverride, dlg, "UpdateConvection");
         }
 
-        //protected override void UpdateConvection(PartThermalData ptd)
-        //{
-        //    if (updateConvectionOverride == null)
-        //    {
-        //        base.UpdateConvection(ptd);
-        //    }
-        //    else
-        //    {
-        //        updateConvectionOverride(this, ptd);
-        //    }
-        //}
-        //
-        //public void BaseFIUpdateConvection(PartThermalData ptd)
-        //{
-        //    base.UpdateConvection(ptd);
-        //}
+        public override void UpdateConvection(PartThermalData ptd)
+        {
+            if (updateConvectionOverride == null)
+            {
+                base.UpdateConvection(ptd);
+            }
+            else
+            {
+                updateConvectionOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIUpdateConvection(PartThermalData ptd)
+        {
+            base.UpdateConvection(ptd);
+        }
 
         private static voidThermalDataDelegate updateRadiationOverride;
 
