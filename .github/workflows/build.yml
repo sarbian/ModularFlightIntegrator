@@ -42,7 +42,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   # Written into ModularFlightIntegrator.version (KSP-AVC / CKAN): the KSP the build targets and the range it is known to work on
   KSP_VERSION: '1.12.5'
-  KSP_VERSION_MIN: '1.11.0'
+  KSP_VERSION_MIN: '1.12.0'
   KSP_VERSION_MAX: '1.13.99'
 
 jobs:

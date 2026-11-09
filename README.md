@@ -4,7 +4,7 @@ A KSP plugin that lets other mods replace or extend parts of the stock `FlightIn
 
 MFI itself changes nothing in the game. It replaces the two stock components with subclasses whose virtual methods forward to a delegate when a mod has registered one, and to the stock code otherwise.
 
-Licence: MIT. For KSP 1.11 to 1.13 (built against 1.12.5).
+Licence: MIT. For KSP 1.12 to 1.13 (built against 1.12.5).
 
 ## Installation
 
@@ -106,7 +106,7 @@ dotnet build -c Debug
 
 ## Releases
 
-GitHub Actions builds every push and pull request (`build.yml`, the zip is a workflow artifact and a comment on the PR). A release is made by running the `create-release` workflow with the version (`major.minor.patch.build`): it builds that version, commits the bump to `AssemblyFileVersion` in `Properties/AssemblyInfo.cs`, names the CHANGELOG's `Unreleased` section after it, tags it `v<version>`, and publishes the release with `ModularFlightIntegrator-<version>.zip` and the KSP-AVC `ModularFlightIntegrator.version` next to it. The version file is generated from `ModularFlightIntegrator/ModularFlightIntegrator.version.in` with the KSP range set in `build.yml` (1.11.0 to 1.13.99, built against 1.12.5).
+GitHub Actions builds every push and pull request (`build.yml`, the zip is a workflow artifact and a comment on the PR). A release is made by running the `create-release` workflow with the version (`major.minor.patch.build`): it builds that version, commits the bump to `AssemblyFileVersion` in `Properties/AssemblyInfo.cs`, names the CHANGELOG's `Unreleased` section after it, tags it `v<version>`, and publishes the release with `ModularFlightIntegrator-<version>.zip` and the KSP-AVC `ModularFlightIntegrator.version` next to it. The version file is generated from `ModularFlightIntegrator/ModularFlightIntegrator.version.in` with the KSP range set in `build.yml` (1.12.0 to 1.13.99, built against 1.12.5).
 
 `AssemblyVersion` stays 1.0.0.0 on purpose: other mods are compiled against this assembly. The API level a mod can require with `KSPAssemblyDependency` is the `KSPAssembly` attribute (1.3); raise it by hand when the API changes.
 
