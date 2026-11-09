@@ -308,6 +308,14 @@ namespace ModularFI
             return HookRegistry.Unregister(ref updateThermodynamicsOverride, dlg, "UpdateThermodynamics");
         }
 
+        /// <summary>
+        /// Adds a handler that runs at the start of every FixedUpdate of the integrator, before the
+        /// thermodynamics. "Every FixedUpdate": the stock UpdateThermodynamics only integrates when
+        /// fTimeSinceThermo exceeds PhysicsGlobals.ThermalIntegrationMinStep, but this list runs on
+        /// every physics step whether or not a thermal step follows, which is what FAR uses it for
+        /// (per-part dynamic pressure and angular drag). Handlers run in registration order, each in
+        /// its own try/catch, and a handler is only added once.
+        /// </summary>
         public static void RegisterUpdateThermodynamicsPre(voidDelegate dlg)
         {
             HookRegistry.Add(ref updateThermodynamicsPre, dlg);
@@ -320,6 +328,11 @@ namespace ModularFI
             updateThermodynamicsPreHandlers = HandlersOf(updateThermodynamicsPre);
         }
 
+        /// <summary>
+        /// Adds a handler that runs after the thermodynamics on every FixedUpdate of the integrator,
+        /// including the steps where no thermal integration happened (see RegisterUpdateThermodynamicsPre).
+        /// Handlers run in registration order, each in its own try/catch, and a handler is only added once.
+        /// </summary>
         public static void RegisterUpdateThermodynamicsPost(voidDelegate dlg)
         {
             HookRegistry.Add(ref updateThermodynamicsPost, dlg);
@@ -536,6 +549,11 @@ namespace ModularFI
             return HookRegistry.Unregister(ref calculateSunBodyFluxOverride, dlg, "CalculateSunBodyFlux");
         }
 
+        /// <summary>
+        /// Adds a handler that runs before the sun and body flux calculation, once per frame (Update,
+        /// through ThermoPrecalculate), not per physics step. Handlers run in registration order, each in
+        /// its own try/catch, and a handler is only added once.
+        /// </summary>
         public static void RegisterCalculateSunBodyFluxPre(voidDelegate dlg)
         {
             HookRegistry.Add(ref calculateSunBodyFluxPre, dlg);
@@ -548,6 +566,10 @@ namespace ModularFI
             calculateSunBodyFluxPreHandlers = HandlersOf(calculateSunBodyFluxPre);
         }
 
+        /// <summary>
+        /// Adds a handler that runs after the sun and body flux calculation, once per frame (Update).
+        /// Handlers run in registration order, each in its own try/catch, and a handler is only added once.
+        /// </summary>
         public static void RegisterCalculateSunBodyFluxPost(voidDelegate dlg)
         {
             HookRegistry.Add(ref calculateSunBodyFluxPost, dlg);
