@@ -4,11 +4,11 @@ A KSP plugin that lets other mods replace or extend parts of the stock `FlightIn
 
 MFI itself changes nothing in the game. It replaces the two stock components with subclasses whose virtual methods forward to a delegate when a mod has registered one, and to the stock code otherwise.
 
-Licence: MIT. For KSP 1.8 and later (built against 1.12.5).
+Licence: MIT. For KSP 1.11 to 1.13 (built against 1.12.5).
 
 ## Installation
 
-Copy the `ModularFlightIntegrator` folder of the release zip into `GameData`. Mods that need MFI list it as a dependency; it is also on CKAN.
+Download the zip of the [latest release](https://github.com/sarbian/ModularFlightIntegrator/releases/latest) and copy its `ModularFlightIntegrator` folder into `GameData`. Mods that need MFI list it as a dependency; it is also on CKAN. The `ModularFlightIntegrator.version` file in the folder lets KSP-AVC check for updates against the latest GitHub release. `CHANGELOG.md` lists the changes of each version.
 
 ## Using it from a mod
 
@@ -98,13 +98,17 @@ FAR, Kopernicus, RealHeat, RP-1 (`ModuleNonReentryRated`), KerbalWeatherProject,
 
 ## Building
 
-Visual Studio or `dotnet build` on `ModularFlightIntegrator.csproj`. Point `ReferencePath` at your KSP's `KSP_x64_Data\Managed` folder, in an untracked `ModularFlightIntegrator.csproj.user` or on the command line:
+A .NET Framework 4.8 class library built with the .NET SDK. Set the `KSPDIR` environment variable to the KSP install (or pass `-p:KSPDIR=<path>`): the references are read from its `KSP_x64_Data\Managed`, and a build copies the DLL and its pdb into `GameData\ModularFlightIntegrator`. With `KSPDIR` empty nothing is copied.
 
 ```
-dotnet build -c Release -p:ReferencePath="D:\KSP\KSP_x64_Data\Managed\" -p:PostBuildEvent=
+dotnet build -c Debug
 ```
 
-The post-build event copies the DLL into `$(KSPDIR)\GameData\ModularFlightIntegrator`; pass `-p:PostBuildEvent=` to skip it. The project targets .NET Framework 4.7 and C# 5, which Unity 2019's Mono runs.
+## Releases
+
+GitHub Actions builds every push and pull request (`build.yml`, the zip is a workflow artifact and a comment on the PR). A release is made by running the `create-release` workflow with the version (`major.minor.patch.build`): it builds that version, commits the bump to `AssemblyFileVersion` in `Properties/AssemblyInfo.cs`, names the CHANGELOG's `Unreleased` section after it, tags it `v<version>`, and publishes the release with `ModularFlightIntegrator-<version>.zip` and the KSP-AVC `ModularFlightIntegrator.version` next to it. The version file is generated from `ModularFlightIntegrator/ModularFlightIntegrator.version.in` with the KSP range set in `build.yml` (1.11.0 to 1.13.99, built against 1.12.5).
+
+`AssemblyVersion` stays 1.0.0.0 on purpose: other mods are compiled against this assembly. The API level a mod can require with `KSPAssemblyDependency` is the `KSPAssembly` attribute (1.3); raise it by hand when the API changes.
 
 ## History worth knowing
 
