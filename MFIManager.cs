@@ -15,15 +15,15 @@ namespace ModularFI
             var fiw = VesselModuleManager.GetWrapper(typeof (FlightIntegrator));
             if (fiw != null && fiw.active)
             {
-                print("[ModularFlightIntegrator] FlightIntegrator is active. Deactivating it");
+                print("[MFIManager] FlightIntegrator is active. Deactivating it");
 
                 VesselModuleManager.SetWrapperActive(typeof (FlightIntegrator), false);
             }
             // Should we display this only if we deactivated the stock FI ?
-            string msg = "[ModularFlightIntegrator] Current active VesselModule : \n";
+            string msg = "[MFIManager] Current active VesselModule : \n";
             foreach (var vesselModuleWrapper in VesselModuleManager.GetModules(false, false))
             {
-                msg += "[ModularFlightIntegrator]  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active +
+                msg += "[MFIManager]  " + vesselModuleWrapper.type.ToString() + " active=" + vesselModuleWrapper.active +
                        " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
@@ -40,7 +40,7 @@ namespace ModularFI
         {
             if (!vessel.gameObject.GetComponent<ModularVesselPrecalculate>())
             {
-                //print("[ModularFlightIntegrator] Adding ModularVesselPrecalculate");
+                //print("[MFIManager] Adding ModularVesselPrecalculate");
                 vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
             }
         }
