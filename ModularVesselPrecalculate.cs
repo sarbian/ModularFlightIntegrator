@@ -6,7 +6,10 @@ namespace ModularFI
     [DefaultExecutionOrder(-102)]
     public class ModularVesselPrecalculate : VesselPrecalculate
     {
-        private float lastMainPhysics = 0;
+        // Universal time of the last MainPhysics run, so that a second call in the
+        // same physics step does nothing (Principia calls MainPhysics itself before
+        // Unity does). The stock Update uses the same key for the same purpose.
+        private double lastMainPhysicsUT = double.NaN;
 
         private static Action runFirstOverride;
 
@@ -74,8 +77,8 @@ namespace ModularFI
         /// <param name="doKillChecks">Do we check if the vessel should be killed?</param>
         public override void MainPhysics(bool doKillChecks)
         {
-            // Prevents ruuning twice in the the same frame. Needed by Principia
-            if (lastMainPhysics == Time.fixedTime)
+            double ut = Planetarium.GetUniversalTime();
+            if (ut == lastMainPhysicsUT)
                 return;
 
             if (mainPhysicsOverride != null)
@@ -83,7 +86,7 @@ namespace ModularFI
             else
                 base.MainPhysics(doKillChecks);
 
-            lastMainPhysics = Time.fixedTime;
+            lastMainPhysicsUT = ut;
         }
 
         public void BaseMainPhysics(bool doKillChecks)
