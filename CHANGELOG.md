@@ -1,6 +1,6 @@
 # Changes
 
-## Unreleased
+## 1.3.0.0 (2026-11-09)
 
 API level 1.3 (`KSPAssembly("ModularFlightIntegrator", 1, 3)`); `AssemblyVersion` stays 1.0.0.0, so mods built against 1.2 keep loading. Misspelled names from 1.2 still work and are marked `[Obsolete]`.
 
