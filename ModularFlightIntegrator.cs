@@ -1164,25 +1164,6 @@ namespace ModularFI
 
 
 
-        //protected override double CalculateDragValue_Spherical(Part part)
-        //{
-        //    return base.CalculateDragValue_Spherical(part);
-        //}
-        //
-        //protected override double CalculateDragValue_Cylindrical(Part part)
-        //{
-        //    return base.CalculateDragValue_Cylindrical(part);
-        //}
-        //
-        //protected override double CalculateDragValue_Conic(Part part)
-        //{
-        //    return base.CalculateDragValue_Conic(part);
-        //}
-        //
-        //protected override double CalculateDragValue_Cube(Part part)
-        //{
-        //    return base.CalculateDragValue_Cube(part);
-        //}
 
         private static doublePartDelegate calculateAerodynamicAreaOverride;
 
@@ -1274,6 +1255,392 @@ namespace ModularFI
         public double BaseFIGetPhysicslessChildMass(Part part)
         {
             return base.GetPhysicslessChildMass(part);
+        }
+
+        // Hooks added in 1.3 for the remaining virtual methods of the stock integrator.
+
+        private static voidBoolDelegate thermalIntegrationPassOverride;
+
+        public static bool RegisterThermalIntegrationPassOverride(voidBoolDelegate dlg)
+        {
+            return HookRegistry.Register(ref thermalIntegrationPassOverride, dlg, "ThermalIntegrationPass");
+        }
+
+        public static bool UnregisterThermalIntegrationPassOverride(voidBoolDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref thermalIntegrationPassOverride, dlg, "ThermalIntegrationPass");
+        }
+
+        /// <summary>
+        /// One pass of the thermal integration: conduction, then convection and radiation per part. Called one or more times per thermal step by the stock UpdateThermodynamics.
+        /// </summary>
+        public override void ThermalIntegrationPass(bool averageWithPrevious)
+        {
+            if (thermalIntegrationPassOverride == null)
+            {
+                base.ThermalIntegrationPass(averageWithPrevious);
+            }
+            else
+            {
+                thermalIntegrationPassOverride(this, averageWithPrevious);
+            }
+        }
+
+        public void BaseFIThermalIntegrationPass(bool averageWithPrevious)
+        {
+            base.ThermalIntegrationPass(averageWithPrevious);
+        }
+
+        private static voidThermalDataDelegate precalcConductionOverride;
+
+        public static bool RegisterPrecalcConductionOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Register(ref precalcConductionOverride, dlg, "PrecalcConduction");
+        }
+
+        public static bool UnregisterPrecalcConductionOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref precalcConductionOverride, dlg, "PrecalcConduction");
+        }
+
+        /// <summary>
+        /// Per-part conduction coefficients, computed once per thermal step before the passes.
+        /// </summary>
+        public override void PrecalcConduction(PartThermalData ptd)
+        {
+            if (precalcConductionOverride == null)
+            {
+                base.PrecalcConduction(ptd);
+            }
+            else
+            {
+                precalcConductionOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIPrecalcConduction(PartThermalData ptd)
+        {
+            base.PrecalcConduction(ptd);
+        }
+
+        private static voidThermalDataDelegate precalcConvectionOverride;
+
+        public static bool RegisterPrecalcConvectionOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Register(ref precalcConvectionOverride, dlg, "PrecalcConvection");
+        }
+
+        public static bool UnregisterPrecalcConvectionOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref precalcConvectionOverride, dlg, "PrecalcConvection");
+        }
+
+        /// <summary>
+        /// Per-part convection coefficient and post-shock temperature, computed once per thermal step before the passes.
+        /// </summary>
+        public override void PrecalcConvection(PartThermalData ptd)
+        {
+            if (precalcConvectionOverride == null)
+            {
+                base.PrecalcConvection(ptd);
+            }
+            else
+            {
+                precalcConvectionOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIPrecalcConvection(PartThermalData ptd)
+        {
+            base.PrecalcConvection(ptd);
+        }
+
+        private static voidThermalDataDelegate precalcRadiationOverride;
+
+        public static bool RegisterPrecalcRadiationOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Register(ref precalcRadiationOverride, dlg, "PrecalcRadiation");
+        }
+
+        public static bool UnregisterPrecalcRadiationOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref precalcRadiationOverride, dlg, "PrecalcRadiation");
+        }
+
+        /// <summary>
+        /// Per-part radiative coefficients and incoming fluxes, computed once per thermal step before the passes.
+        /// </summary>
+        public override void PrecalcRadiation(PartThermalData ptd)
+        {
+            if (precalcRadiationOverride == null)
+            {
+                base.PrecalcRadiation(ptd);
+            }
+            else
+            {
+                precalcRadiationOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIPrecalcRadiation(PartThermalData ptd)
+        {
+            base.PrecalcRadiation(ptd);
+        }
+
+        private static voidThermalDataDelegate unifySkinTempOverride;
+
+        public static bool RegisterUnifySkinTempOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Register(ref unifySkinTempOverride, dlg, "UnifySkinTemp");
+        }
+
+        public static bool UnregisterUnifySkinTempOverride(voidThermalDataDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref unifySkinTempOverride, dlg, "UnifySkinTemp");
+        }
+
+        /// <summary>
+        /// Merges the exposed and unexposed skin temperatures of a part.
+        /// </summary>
+        public override void UnifySkinTemp(PartThermalData ptd)
+        {
+            if (unifySkinTempOverride == null)
+            {
+                base.UnifySkinTemp(ptd);
+            }
+            else
+            {
+                unifySkinTempOverride(this, ptd);
+            }
+        }
+
+        public void BaseFIUnifySkinTemp(PartThermalData ptd)
+        {
+            base.UnifySkinTemp(ptd);
+        }
+
+        private static voidPartDelegate setSkinThermalMassOverride;
+
+        public static bool RegisterSetSkinThermalMassOverride(voidPartDelegate dlg)
+        {
+            return HookRegistry.Register(ref setSkinThermalMassOverride, dlg, "SetSkinThermalMass");
+        }
+
+        public static bool UnregisterSetSkinThermalMassOverride(voidPartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref setSkinThermalMassOverride, dlg, "SetSkinThermalMass");
+        }
+
+        /// <summary>
+        /// Sets the skin thermal mass of a part from its mass and skin fraction. Called from UpdateMassStats.
+        /// </summary>
+        public override void SetSkinThermalMass(Part part)
+        {
+            if (setSkinThermalMassOverride == null)
+            {
+                base.SetSkinThermalMass(part);
+            }
+            else
+            {
+                setSkinThermalMassOverride(this, part);
+            }
+        }
+
+        public void BaseFISetSkinThermalMass(Part part)
+        {
+            base.SetSkinThermalMass(part);
+        }
+
+        private static voidDelegate smoothVelocityOverride;
+
+        public static bool RegisterSmoothVelocityOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Register(ref smoothVelocityOverride, dlg, "SmoothVelocity");
+        }
+
+        public static bool UnregisterSmoothVelocityOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref smoothVelocityOverride, dlg, "SmoothVelocity");
+        }
+
+        /// <summary>
+        /// The velocity smoother that produces Vel from the raw rigidbody velocity every step.
+        /// </summary>
+        protected override void SmoothVelocity()
+        {
+            if (smoothVelocityOverride == null)
+            {
+                base.SmoothVelocity();
+            }
+            else
+            {
+                smoothVelocityOverride(this);
+            }
+        }
+
+        public void BaseFISmoothVelocity()
+        {
+            base.SmoothVelocity();
+        }
+
+        private static voidDelegate thermoPrecalculateOverride;
+
+        public static bool RegisterThermoPrecalculateOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Register(ref thermoPrecalculateOverride, dlg, "ThermoPrecalculate");
+        }
+
+        public static bool UnregisterThermoPrecalculateOverride(voidDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref thermoPrecalculateOverride, dlg, "ThermoPrecalculate");
+        }
+
+        /// <summary>
+        /// The per-frame (Update) thermal work: in stock, CalculateSunBodyFlux.
+        /// </summary>
+        public override void ThermoPrecalculate()
+        {
+            if (thermoPrecalculateOverride == null)
+            {
+                base.ThermoPrecalculate();
+            }
+            else
+            {
+                thermoPrecalculateOverride(this);
+            }
+        }
+
+        public void BaseFIThermoPrecalculate()
+        {
+            base.ThermoPrecalculate();
+        }
+
+        private static doublePartDelegate calculateDragValue_SphericalOverride;
+
+        public static bool RegisterCalculateDragValue_SphericalOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Register(ref calculateDragValue_SphericalOverride, dlg, "CalculateDragValue_Spherical");
+        }
+
+        public static bool UnregisterCalculateDragValue_SphericalOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDragValue_SphericalOverride, dlg, "CalculateDragValue_Spherical");
+        }
+
+        /// <summary>
+        /// Drag value of a part with the spherical drag model.
+        /// </summary>
+        protected override double CalculateDragValue_Spherical(Part part)
+        {
+            if (calculateDragValue_SphericalOverride == null)
+            {
+                return base.CalculateDragValue_Spherical(part);
+            }
+            else
+            {
+                return calculateDragValue_SphericalOverride(this, part);
+            }
+        }
+
+        public double BaseFICalculateDragValue_Spherical(Part part)
+        {
+            return base.CalculateDragValue_Spherical(part);
+        }
+
+        private static doublePartDelegate calculateDragValue_CylindricalOverride;
+
+        public static bool RegisterCalculateDragValue_CylindricalOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Register(ref calculateDragValue_CylindricalOverride, dlg, "CalculateDragValue_Cylindrical");
+        }
+
+        public static bool UnregisterCalculateDragValue_CylindricalOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDragValue_CylindricalOverride, dlg, "CalculateDragValue_Cylindrical");
+        }
+
+        /// <summary>
+        /// Drag value of a part with the cylindrical drag model.
+        /// </summary>
+        protected override double CalculateDragValue_Cylindrical(Part part)
+        {
+            if (calculateDragValue_CylindricalOverride == null)
+            {
+                return base.CalculateDragValue_Cylindrical(part);
+            }
+            else
+            {
+                return calculateDragValue_CylindricalOverride(this, part);
+            }
+        }
+
+        public double BaseFICalculateDragValue_Cylindrical(Part part)
+        {
+            return base.CalculateDragValue_Cylindrical(part);
+        }
+
+        private static doublePartDelegate calculateDragValue_ConicOverride;
+
+        public static bool RegisterCalculateDragValue_ConicOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Register(ref calculateDragValue_ConicOverride, dlg, "CalculateDragValue_Conic");
+        }
+
+        public static bool UnregisterCalculateDragValue_ConicOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDragValue_ConicOverride, dlg, "CalculateDragValue_Conic");
+        }
+
+        /// <summary>
+        /// Drag value of a part with the conic drag model.
+        /// </summary>
+        protected override double CalculateDragValue_Conic(Part part)
+        {
+            if (calculateDragValue_ConicOverride == null)
+            {
+                return base.CalculateDragValue_Conic(part);
+            }
+            else
+            {
+                return calculateDragValue_ConicOverride(this, part);
+            }
+        }
+
+        public double BaseFICalculateDragValue_Conic(Part part)
+        {
+            return base.CalculateDragValue_Conic(part);
+        }
+
+        private static doublePartDelegate calculateDragValue_CubeOverride;
+
+        public static bool RegisterCalculateDragValue_CubeOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Register(ref calculateDragValue_CubeOverride, dlg, "CalculateDragValue_Cube");
+        }
+
+        public static bool UnregisterCalculateDragValue_CubeOverride(doublePartDelegate dlg)
+        {
+            return HookRegistry.Unregister(ref calculateDragValue_CubeOverride, dlg, "CalculateDragValue_Cube");
+        }
+
+        /// <summary>
+        /// Drag value of a part from its drag cubes (the stock default).
+        /// </summary>
+        protected override double CalculateDragValue_Cube(Part part)
+        {
+            if (calculateDragValue_CubeOverride == null)
+            {
+                return base.CalculateDragValue_Cube(part);
+            }
+            else
+            {
+                return calculateDragValue_CubeOverride(this, part);
+            }
+        }
+
+        public double BaseFICalculateDragValue_Cube(Part part)
+        {
+            return base.CalculateDragValue_Cube(part);
         }
 
         static void print(string msg)

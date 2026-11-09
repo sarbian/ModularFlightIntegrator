@@ -164,16 +164,6 @@ namespace ModularFI
             base.GoOffRails();
         }
 
-        //protected override void StartEasing()
-        //{
-        //    base.StartEasing();
-        //}
-        //
-        //protected override void StopEasing()
-        //{
-        //    base.StopEasing();
-        //}
-
         private static Action calculateGravityOverride;
 
         public static bool RegisterCalculateGravityOverride(Action act)
@@ -203,14 +193,6 @@ namespace ModularFI
             base.CalculateGravity();
         }
 
-        ///// <summary>
-        ///// This will update pos/rot if landed/splashed and on rails
-        ///// </summary>
-        //public override void SetLandedPosRot()
-        //{
-        //    base.SetLandedPosRot();
-        //}
-        
         private static Action calculatePhysicsStatsOverride;
 
         public static bool RegisterCalculatePhysicsStatsOverride(Action act)
@@ -239,6 +221,102 @@ namespace ModularFI
         public void BaseCalculatePhysicsStats()
         {
             base.CalculatePhysicsStats();
+        }
+
+        private static Action setLandedPosRotOverride;
+
+        public static bool RegisterSetLandedPosRotOverride(Action dlg)
+        {
+            return HookRegistry.Register(ref setLandedPosRotOverride, dlg, "SetLandedPosRot");
+        }
+
+        public static bool UnregisterSetLandedPosRotOverride(Action dlg)
+        {
+            return HookRegistry.Unregister(ref setLandedPosRotOverride, dlg, "SetLandedPosRot");
+        }
+
+        /// <summary>
+        /// Updates the position and rotation of a landed or splashed vessel that is on rails.
+        /// </summary>
+        public override void SetLandedPosRot()
+        {
+            if (setLandedPosRotOverride == null)
+            {
+                base.SetLandedPosRot();
+            }
+            else
+            {
+                setLandedPosRotOverride();
+            }
+        }
+
+        public void BaseSetLandedPosRot()
+        {
+            base.SetLandedPosRot();
+        }
+
+        private static Action startEasingOverride;
+
+        public static bool RegisterStartEasingOverride(Action dlg)
+        {
+            return HookRegistry.Register(ref startEasingOverride, dlg, "StartEasing");
+        }
+
+        public static bool UnregisterStartEasingOverride(Action dlg)
+        {
+            return HookRegistry.Unregister(ref startEasingOverride, dlg, "StartEasing");
+        }
+
+        /// <summary>
+        /// Starts easing gravity in for a vessel coming off rails while landed or splashed.
+        /// </summary>
+        protected override void StartEasing()
+        {
+            if (startEasingOverride == null)
+            {
+                base.StartEasing();
+            }
+            else
+            {
+                startEasingOverride();
+            }
+        }
+
+        public void BaseStartEasing()
+        {
+            base.StartEasing();
+        }
+
+        private static Action stopEasingOverride;
+
+        public static bool RegisterStopEasingOverride(Action dlg)
+        {
+            return HookRegistry.Register(ref stopEasingOverride, dlg, "StopEasing");
+        }
+
+        public static bool UnregisterStopEasingOverride(Action dlg)
+        {
+            return HookRegistry.Unregister(ref stopEasingOverride, dlg, "StopEasing");
+        }
+
+        /// <summary>
+        /// Ends the gravity easing.
+        /// </summary>
+        protected override void StopEasing()
+        {
+            if (stopEasingOverride == null)
+            {
+                base.StopEasing();
+            }
+            else
+            {
+                stopEasingOverride();
+            }
+        }
+
+        public void BaseStopEasing()
+        {
+            base.StopEasing();
         }
 
         //public override bool isEasingGravity { get; set; }
