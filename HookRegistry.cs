@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ModularFI
@@ -88,6 +89,30 @@ namespace ModularFI
         internal static void Remove<T>(ref T list, T dlg) where T : class
         {
             list = Delegate.Remove(list as Delegate, dlg as Delegate) as T;
+        }
+
+        private static readonly Dictionary<Delegate, int> handlerFailures = new Dictionary<Delegate, int>();
+
+        /// <summary>
+        /// Logs an exception thrown by a Pre/Post handler: in full the first time, then one
+        /// line every thousand failures, so a handler that throws every step does not fill
+        /// the log by itself.
+        /// </summary>
+        internal static void ReportHandlerException(string hook, Delegate handler, Exception e)
+        {
+            int failures;
+            handlerFailures.TryGetValue(handler, out failures);
+            failures++;
+            handlerFailures[handler] = failures;
+
+            if (failures == 1)
+            {
+                Debug.LogError("[ModularFlightIntegrator] " + hook + " handler " + Owner(handler) + " threw an exception. It is skipped this step; further exceptions from it are counted and logged every 1000 failures.\n" + e);
+            }
+            else if (failures % 1000 == 0)
+            {
+                Debug.LogError("[ModularFlightIntegrator] " + hook + " handler " + Owner(handler) + " has thrown " + failures + " times. Last: " + e.GetType().Name + ": " + e.Message);
+            }
         }
 
         /// <summary>

@@ -21,6 +21,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -230,9 +231,50 @@ namespace ModularFI
             return base.CalculateShockTemperature();
         }
         
+        private static readonly voidDelegate[] NoHandlers = new voidDelegate[0];
+
+        // The Pre/Post lists are kept both as a multicast delegate (what Add/Remove work on)
+        // and as an array (what the integrator iterates), so that each handler runs in its
+        // own try/catch without allocating an invocation list every step.
+        private static voidDelegate[] HandlersOf(voidDelegate list)
+        {
+            if (list == null)
+            {
+                return NoHandlers;
+            }
+
+            Delegate[] all = list.GetInvocationList();
+            voidDelegate[] handlers = new voidDelegate[all.Length];
+            for (int i = 0; i < all.Length; i++)
+            {
+                handlers[i] = (voidDelegate)all[i];
+            }
+
+            return handlers;
+        }
+
+        // One handler that throws must not stop the others, nor the rest of this FixedUpdate:
+        // the forces the part modules queued would be neither applied nor cleared that step.
+        private void InvokeHandlers(voidDelegate[] handlers, string hook)
+        {
+            for (int i = 0; i < handlers.Length; i++)
+            {
+                try
+                {
+                    handlers[i](this);
+                }
+                catch (Exception e)
+                {
+                    HookRegistry.ReportHandlerException(hook, handlers[i], e);
+                }
+            }
+        }
+
         private static voidDelegate updateThermodynamicsOverride;
         private static voidDelegate updateThermodynamicsPre;
         private static voidDelegate updateThermodynamicsPost;
+        private static voidDelegate[] updateThermodynamicsPreHandlers = NoHandlers;
+        private static voidDelegate[] updateThermodynamicsPostHandlers = NoHandlers;
 
         public static bool RegisterUpdateThermodynamicsOverride(voidDelegate dlg)
         {
@@ -247,21 +289,25 @@ namespace ModularFI
         public static void RegisterUpdateThermodynamicsPre(voidDelegate dlg)
         {
             HookRegistry.Add(ref updateThermodynamicsPre, dlg);
+            updateThermodynamicsPreHandlers = HandlersOf(updateThermodynamicsPre);
         }
 
         public static void UnregisterUpdateThermodynamicsPre(voidDelegate dlg)
         {
             HookRegistry.Remove(ref updateThermodynamicsPre, dlg);
+            updateThermodynamicsPreHandlers = HandlersOf(updateThermodynamicsPre);
         }
 
         public static void RegisterUpdateThermodynamicsPost(voidDelegate dlg)
         {
             HookRegistry.Add(ref updateThermodynamicsPost, dlg);
+            updateThermodynamicsPostHandlers = HandlersOf(updateThermodynamicsPost);
         }
 
         public static void UnregisterUpdateThermodynamicsPost(voidDelegate dlg)
         {
             HookRegistry.Remove(ref updateThermodynamicsPost, dlg);
+            updateThermodynamicsPostHandlers = HandlersOf(updateThermodynamicsPost);
         }
 
         protected override void UpdateThermodynamics()
@@ -274,10 +320,7 @@ namespace ModularFI
 
             // UpdateRadiation
 
-            if (updateThermodynamicsPre != null)
-            {
-                updateThermodynamicsPre(this);
-            }
+            InvokeHandlers(updateThermodynamicsPreHandlers, "UpdateThermodynamicsPre");
 
             if (updateThermodynamicsOverride == null)
             {
@@ -288,11 +331,7 @@ namespace ModularFI
                 updateThermodynamicsOverride(this);
             }
 
-            if (updateThermodynamicsPost != null)
-            {
-                updateThermodynamicsPost(this);
-            }
-
+            InvokeHandlers(updateThermodynamicsPostHandlers, "UpdateThermodynamicsPost");
         }
 
         public void BaseFIUpdateThermodynamics()
@@ -456,6 +495,8 @@ namespace ModularFI
         private static voidDelegate calculateSunBodyFluxOverride;
         private static voidDelegate calculateSunBodyFluxPre;
         private static voidDelegate calculateSunBodyFluxPost;
+        private static voidDelegate[] calculateSunBodyFluxPreHandlers = NoHandlers;
+        private static voidDelegate[] calculateSunBodyFluxPostHandlers = NoHandlers;
 
         public static bool RegisterCalculateSunBodyFluxOverride(voidDelegate dlg)
         {
@@ -470,29 +511,30 @@ namespace ModularFI
         public static void RegisterCalculateSunBodyFluxPre(voidDelegate dlg)
         {
             HookRegistry.Add(ref calculateSunBodyFluxPre, dlg);
+            calculateSunBodyFluxPreHandlers = HandlersOf(calculateSunBodyFluxPre);
         }
 
         public static void UnregisterCalculateSunBodyFluxPre(voidDelegate dlg)
         {
             HookRegistry.Remove(ref calculateSunBodyFluxPre, dlg);
+            calculateSunBodyFluxPreHandlers = HandlersOf(calculateSunBodyFluxPre);
         }
 
         public static void RegisterCalculateSunBodyFluxPost(voidDelegate dlg)
         {
             HookRegistry.Add(ref calculateSunBodyFluxPost, dlg);
+            calculateSunBodyFluxPostHandlers = HandlersOf(calculateSunBodyFluxPost);
         }
 
         public static void UnregisterCalculateSunBodyFluxPost(voidDelegate dlg)
         {
             HookRegistry.Remove(ref calculateSunBodyFluxPost, dlg);
+            calculateSunBodyFluxPostHandlers = HandlersOf(calculateSunBodyFluxPost);
         }
 
         protected override void CalculateSunBodyFlux()
         {
-            if (calculateSunBodyFluxPre != null)
-            {
-                calculateSunBodyFluxPre(this);
-            }
+            InvokeHandlers(calculateSunBodyFluxPreHandlers, "CalculateSunBodyFluxPre");
 
             if (calculateSunBodyFluxOverride == null)
             {
@@ -503,10 +545,7 @@ namespace ModularFI
                 calculateSunBodyFluxOverride(this);
             }
 
-            if (calculateSunBodyFluxPost != null)
-            {
-                calculateSunBodyFluxPost(this);
-            }
+            InvokeHandlers(calculateSunBodyFluxPostHandlers, "CalculateSunBodyFluxPost");
         }
 
         public void BaseFICalculateSunBodyFlux()
