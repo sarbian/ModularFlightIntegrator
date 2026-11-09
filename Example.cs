@@ -3,26 +3,33 @@ using UnityEngine;
 
 namespace MyFunMod
 {
-    // this is a really simple example of how to use ModularFlightIntegrator
-    // This one would replace the drag calculation to remove drag whole
-    // And make stuff hot
+    // This is a really simple example of how to use ModularFlightIntegrator.
+    // It removes drag altogether and doubles the convective heating.
     // Obviously you would have to uncomment the lines for it to work.
-    
+    //
+    // Register once, from the Space Centre (KSPAddon with once = true):
+    // each hook has one slot, the first registration wins and the method
+    // returns false for the others. Call the matching BaseFI* method
+    // from an override to get the stock behaviour.
+
     /*
-    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+    [KSPAddon(KSPAddon.Startup.SpaceCentre, true)]
     class Example : MonoBehaviour
     {
 
         public void Awake()
         {
             Debug.Log("Registering our calls in ModularFlightIntegrator");
-            ModularFlightIntegrator.RegisterCalculateDragValueOverride(IDontLikeDrag);
-            ModularFlightIntegrator.RegisterUpdateConvectionOverride(ProcessUpdateConvection);
+            if (!ModularFlightIntegrator.RegisterCalculateDragValueOverride(IDontLikeDrag))
+                Debug.Log("Another mod already overrides CalculateDragValue");
+            if (!ModularFlightIntegrator.RegisterUpdateConvectionOverride(ProcessUpdateConvection))
+                Debug.Log("Another mod already overrides UpdateConvection");
         }
 
-        private void ProcessUpdateConvection(ModularFlightIntegrator fi, FlightIntegrator.PartThermalData ptd)
+        private static void ProcessUpdateConvection(ModularFlightIntegrator fi, PartThermalData ptd)
         {
-            ptd.part.temperature = 4000;
+            fi.BaseFIUpdateConvection(ptd);
+            ptd.convectionFlux *= 2;
         }
 
         private static double IDontLikeDrag(ModularFlightIntegrator fi, Part part)
