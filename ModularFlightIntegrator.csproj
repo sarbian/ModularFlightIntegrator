@@ -1,80 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    KSP 1.12 mod: a .NET Framework 4.8 class library built with the .NET SDK (no Visual Studio needed).
+    The KSP assemblies come from the install named by KSPDIR (an environment variable, or -p:KSPDIR=<path>);
+    on CI it is the KSPModdingLibs archive, which has the same KSP_x64_Data/Managed layout.
+    With KSPDIR set, a build also copies the DLL and its pdb into GameData/ModularFlightIntegrator there.
+  -->
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D03697DA-C866-4D0E-A821-1795F0B0333C}</ProjectGuid>
-    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModularFlightIntegrator</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>ModularFlightIntegrator</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <LangVersion>5</LangVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <RootNamespace>ModularFI</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>portable</DebugType>
+    <KspManaged>$(KSPDIR)/KSP_x64_Data/Managed</KspManaged>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- the .NET Framework reference assemblies, so the build needs no targeting pack and works on Linux -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Example.cs is documentation for mod authors; the license and version template ship in the package -->
+    <Compile Remove="Example.cs" />
+    <None Include="Example.cs" />
+    <Compile Remove="ModularFlightIntegrator/**" />
+    <None Include="ModularFlightIntegrator/**" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
+      <HintPath>$(KspManaged)/Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine">
+      <HintPath>$(KspManaged)/UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(KspManaged)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="HookRegistry.cs" />
-    <Compile Include="MFIManager.cs" />
-    <Compile Include="ModularFlightIntegrator.cs" />
-    <Compile Include="ModularVesselPrecalculate.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>echo copying to "$(KSPDIR)\GameData\ModularFlightIntegrator\"
-"$(PDB2MDB)" $(TargetFileName)
-xcopy /Y "$(TargetPath)" "$(KSPDIR)\GameData\ModularFlightIntegrator\"
-xcopy /Y "$(TargetDir)$(TargetName).pdb" "$(KSPDIR)\GameData\ModularFlightIntegrator\"
-xcopy /Y "$(TargetDir)$(TargetName).dll.mdb" "$(KSPDIR)\GameData\ModularFlightIntegrator\"
-</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <Target Name="CopyToKsp" AfterTargets="Build" Condition="'$(KSPDIR)' != ''">
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(KSPDIR)/GameData/ModularFlightIntegrator" ContinueOnError="true" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

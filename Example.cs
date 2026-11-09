@@ -1,4 +1,4 @@
-﻿using ModularFI;
+using ModularFI;
 using UnityEngine;
 
 namespace MyFunMod

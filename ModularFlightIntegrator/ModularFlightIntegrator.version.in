@@ -1,7 +1,7 @@
 {
     "NAME": "ModularFlightIntegrator",
-    "URL": "https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/lastSuccessfulBuild/artifact/ModularFlightIntegrator/ModularFlightIntegrator.version",
-    "DOWNLOAD": "https://forum.kerbalspaceprogram.com/index.php?/topic/106369-x",
+    "URL": "https://github.com/sarbian/ModularFlightIntegrator/releases/latest/download/ModularFlightIntegrator.version",
+    "DOWNLOAD": "https://github.com/sarbian/ModularFlightIntegrator/releases/latest",
     "VERSION":{
         "MAJOR": @VERSION_MAJOR@,
         "MINOR": @VERSION_MINOR@,
